@@ -1,0 +1,120 @@
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-size: 16px;
+  }
+
+  body{
+    background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url("../../static/img/bg.png") ;
+    -webkit-background-size: cover; /* For WebKit*/
+    -moz-background-size: cover;    /* Mozilla*/
+    -o-background-size: cover;      /* Opera*/
+    background-size: cover;         /* Generic*/
+  }
+
+  .main{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    min-height: 100vh;
+  }
+  
+  form {
+    margin: 0 auto;
+    min-height: 430px;
+    width: 100%;
+    max-width: 430px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow:0 1px 5px rgba(0, 0, 0, 0.3), 0 0 40px rgba(250, 98, 0, 0.1) inset;
+  }
+
+  form input {
+    width: 80%;
+    margin-left: 10%;
+    font-size: 20px;
+    background-color: #F9F2F2;
+    box-sizing: border-box;
+    border-color: rgba(0, 0, 0, 0.3);
+    height: 60px;
+    padding: 0 10px;
+  }
+
+  #username{
+    border-radius: 7px 7px 0 0; 
+    border-style: inset;
+  }
+
+  #password{
+    border-radius: 0 0 7px 7px; 
+    border-style: outset;
+  }
+
+  form a, form a:focus, form a:active{
+    font-size: 15px;
+    align-self: center;
+    outline: none;
+    text-decoration: none;
+  }
+
+  form a:hover{
+    color: rgb(250, 98, 0);
+  }
+
+  form .logo{
+    display: flex;
+    margin-bottom:10px;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+  }
+
+  form .logo img{
+    align-self: center;
+    max-width: 250px;
+    max-height: 125px;
+  }
+
+  #login{
+    color: white;
+    width: 80%;
+    margin-left: 10%;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  .glyphicon {
+    font-size: 30px;
+  }
+
+  .center {
+    float: none; 
+    margin: 20px auto;
+    width: 80%;
+  }
+
+  .bootstrap-select:not([class*="span"]):not([class*="col-"]):not([class*="form-control"]):not(.input-group-btn){
+    width:100%;
+  }
+
+  .selectpicker{
+    background-color: #F9F2F2;
+    border-color: rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .bs-searchbox input {
+    width: 94% !important;
+    margin: 5px 3% !important;
+  }
