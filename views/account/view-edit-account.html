@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Edit Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/bootstrap.css">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/styles.css">
+    <script                 type="text/javascript"  src="../../static/js/jquery.js"></script>
+    <script                 type="text/javascript"  src="../../static/js/bootstrap.min.js"></script>
+    <script                 type="text/javascript"  src="../../static/js/upload-image.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.3/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.2.3/jquery-confirm.min.js"></script>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
+          <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Home</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">{{ user.first_name }} {{ user.middle_name }} {{ user.last_name }} </a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- END OF NAVIGATION -->
+
+    <div class="container-fluid main-container">
+        <!-- BREADCRUMBS -->
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="active">Edit Account</li>
+        </ol>
+        <!-- END OF BREADCRUMBS -->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 form-container">
+                    <form id="delete-account-form" method="POST" action="/account_delete/{{user.id}}"> 
+                    </form>
+                    <form id="edit-account-form" class="form-horizontal" role="form" method="POST" action="/account_edit/{{user.id}}" enctype="multipart/form-data">
+                        <legend><b>Edit Account</b>
+                        <a class="btn btn-blue" style="float: right; margin-top: -10px !important" id="delete-account-button">Delete</a></legend>
+                        <!-- photo and digital signature (if user type==doctor) -->
+                        {% if messages.statusMessage %}
+                        <div class="alert alert-success">
+                            {{ messages.statusMessage }}
+                        </div>
+                        {% endif %}
+                        <div class="col-xs-12 col-md-5 col-md-push-7">
+                            <div class="col-md-8 col-md-offset-2">
+                                <div class="form-group">
+                                    <center><label>Photo:</label></center>
+                                    <img id='img-upload' src="{{user.photo}}">
+                                    {% if session.user.id == user.id or session.superuser %}
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <span class="btn btn-default btn-file">
+                                                Browse… <input type="file" id="imgInp" name="photo">
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" readonly>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="doctor-fields">
+                                    <div class="form-group">
+                                        <center><label>Digital Signature:</label></center>
+                                        <img id='digital-sign-upload' src="{{type.Doctor.signature}}" />
+                                        {% if session.user.id == user.id or session.superuser %}
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-default btn-file">
+                                                    Browse… <input type="file" id="digitalSignInp" name="signature">
+                                                </span>
+                                            </span>
+                                            <input type="text" class="form-control" readonly>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- user account info -->
+                        <div class="col-xs-12 col-md-7 col-md-pull-5">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="username">Username*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="id" id="username" value="{{user.id}}" required
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                <div>
+                                    <p id="error-username"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label text-muted" for="user_type">User Type*</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control text-muted" id="user-type" name="user_type" required disabled>
+                                            {% if type.Doctor %}
+                                                <option value="Doctor" selected disabled>Doctor</option>
+                                                <option value="Secretary" disabled>Secretary</option>
+                                            {% else %}
+                                                <option value="Doctor" disabled>Doctor</option>
+                                                <option value="Secretary" selected disabled>Secretary</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label text-muted" for="access_rights">Access Rights*</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control text-muted" id="access-rights" name="access_rights" required disabled>
+                                            {% if type.Admin %}
+                                                <option value="Normal" disabled>Normal</option>
+                                                <option value="Admin" selected disabled>Administrator</option>
+                                            {% else %}
+                                                <option value="Normal" selected disabled>Normal</option>
+                                                <option value="Admin" disabled>Administrator</option>
+                                            {% endif %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="title">Title</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="title" name="title" required
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                            <option value="" disabled>Select Title</option>
+                                            {% for title in title_types %}
+                                            {% if user.title == title %}
+                                                <option value="{{ title }}" selected>{{ title }}</option>
+                                            {% else %}
+                                                <option value="{{ title }}">{{ title }}</option>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="last-name">Last Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="last_name" id="last-name" required value="{{user.last_name}}"
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="first-name">First Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="first_name" id="first-name" required value="{{user.first_name}}"
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="middle-name">Middle Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="middle_name" id="middle-name" required value="{{user.middle_name}}"
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="suffix">Suffix</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="suffix" id="suffix" value="{{user.suffix}}"
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                <input type="hidden" name="edit-count" id="edit-count" value="{{user.contact_numbers.length}}" />
+                                <div class="form-group control-group" id="edit-fields">
+                                    <label class="control-label col-sm-4" for="edit-field">Contact #(s)</label>
+                                    <div class="controls col-sm-8" id="edit-contacts"> 
+                                        <div class="input-append" id="edit-contact-list">
+                                            <div id="edit-field"><input autocomplete="off" class="form-control dynamic-field" id="edit-field1" name="edit-field1" type="text" placeholder="contact number" data-items="8"  style="width: 85% !important;" 
+                                                {% if session.user.id != user.id and not session.superuser %}
+                                                disabled/>
+                                                {% else %}
+                                                /><button id="edit-b1" class="btn btn-success add-more" type="button" title="add another contact" style="width: 15% !important;">+</button>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="email-add">E-mail Address</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="email_add" id="email-add" value="{{user.email}}"
+                                        {% if session.user.id != user.id and not session.superuser %}
+                                        disabled
+                                        {% endif %}
+                                        >
+                                    </div>
+                                </div>
+                                {% if type.Doctor %}
+                                    <input class="hidden" name="user-type" value="Doctor"/>
+                                    <div class="doctor-fields">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" for="license-num">License Number*</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="license_num" id="license-num" required value="{{ type.Doctor.license_no }}"
+                                                {% if session.user.id != user.id and not session.superuser %}
+                                                disabled
+                                                {% endif %}
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" for="ptr-num">PTR Number*</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="ptr_num" id="ptr-num" required value="{{ type.Doctor.ptr_no }}"{% if session.user.id != user.id and not session.superuser %}
+                                                disabled
+                                                {% endif %}
+                                                >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label" for="s2-license-num">S2 License Number*</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" class="form-control" name="s2_license_num" id="s2-license-num" required value="{{ type.Doctor.s2_license_no }}"
+                                                {% if session.user.id != user.id and not session.superuser %}
+                                                disabled
+                                                {% endif %}
+                                                >
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <input class="hidden" name="user-type" value="Secretary"/>
+                                {% endif %}
+                                {% if session.user.id == user.id or session.superuser %}
+                                <div class="form-group">
+                                    <div class="col-sm-8 col-sm-offset-4">
+                                        <a href="" class="btn btn-primary" data-toggle="modal" data-target="#reset-password-modal">Reset Password</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </fieldset>
+                        </div>
+                        {% if session.user.id == user.id or session.superuser %}
+                        <div class="button-group">
+                            <a href="/account_list" class="btn btn-gray pull-right">Cancel</a>
+                            <button type="submit" class="btn btn-lime pull-right" id="save-btn">Save</button>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% if session.user.id == user.id or session.superuser %}
+        <!-- RESET PASSWORD MODAL -->
+        <div class="modal fade" id="reset-password-modal" role="dialog">
+            <div class="modal-dialog">
+              <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+                        <h4 class="modal-title" style="float:left"><strong>Reset Password</strong></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <p id="error-reset-pw"></p>
+                                    <form id="reset-password-form" class="form-horizontal" method="POST" action="/reset_password/{{ user.id }}">
+                                        <fieldset>
+                                            {% if not session.superuser %}
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label" for="old-password">Old Password*</label>
+                                                <div class="col-sm-9">
+                                                    <input type="password" class="form-control" name="old_password" id="old-password" required autocomplete="off">
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label" for="new-password">New Password*</label>
+                                                <div class="col-sm-9">
+                                                    <input type="password" class="form-control" name="new_password" id="new-password" required>
+                                                </div>
+                                            </div>
+                                             <div class="form-group">
+                                                <label class="col-sm-3 control-label" for="new-password-2">Confirm New Password*</label>
+                                                <div class="col-sm-9">
+                                                    <input type="password" class="form-control" name="new_password_2" id="new-password-2" required>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <div class="button-group">
+                                            <a href="" class="btn btn-gray pull-right">Cancel</a>
+                                            <button type="submit" class="btn btn-lime pull-right" id="reset-password-btn">Save</button>    
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of RESET PASSWORD MODAL -->
+        {% endif %}
+
+    </div>
+</body>
+
+<script type="text/javascript">
+    $(document).on("ready", function() {
+        if($('#user-type :selected').text() == 'Doctor') {
+            $('.doctor-fields').show();
+        }
+    });   
+    $(document).on("ready",function() {
+        var next = 0;
+        var key = $('#username').val();
+        $.ajax({
+            type: "GET",
+            url: "/account_edit_contacts/" + key,
+            data: {id: key},
+        }).done(function(data) {
+            if(data != null){
+                var j = data.length;
+                var contacts = data;
+                for (var x = 0; x < j; x++){        
+                    var addto = "#edit-field" + next;
+                    var addRemove = "#edit-field" + (next);
+                    next = next + 1;
+                    var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="edit-field' + next + '" name="edit-field' + next + '" type="text" placeholder="contact number" style="width: 85% !important" {% if session.user.id != user.id and not session.superuser %}disabled{% endif %} >';
+                    var newInput = $(newIn);
+                    {% if session.user.id == user.id or session.superuser %}
+                    var removeBtn = '<button id="edit-remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact" style="width: 15% !important">-</button></div><div id="edit-field">';
+                    var removeButton = $(removeBtn);
+                    $(addRemove).after(removeButton);
+                    {% endif %}
+                    $(addto).after(newInput);
+                    $("#edit-field" + next).attr('data-source',$(addto).attr('data-source'));
+                    $("#edit-count").val(next);  
+                    
+                        $('.remove-me').click(function(e){
+                            e.preventDefault();
+                            var fieldNum = this.id.charAt(this.id.length-1);
+                            var fieldID = "#edit-field" + fieldNum;
+                            $(this).remove();
+                            $(fieldID).remove();
+                        });
+                    $('#edit-field'+next).val(contacts[x]);
+                }
+            }
+        });
+        
+        {% if session.user.id == user.id or session.superuser %}
+        $("#edit-b1").click(function (e) {
+            if( next == 0 )
+                next = 1;
+
+            e.preventDefault();
+            var addto = "#edit-field" + next;
+            var addRemove = "#edit-field" + (next);
+            next = next + 1;
+            var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="edit-field' + next + '" name="edit-field' + next + '" type="text" placeholder="contact number" style="width: 85% !important;">';
+            var newInput = $(newIn);
+            var removeBtn = '<button id="edit-remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact" style="width: 15% !important;">-</button></div><div id="edit-field">';
+            var removeButton = $(removeBtn);
+            $(addto).after(newInput);
+            $(addRemove).after(removeButton);
+            $("#edit-field" + next).attr('data-source',$(addto).attr('data-source'));
+            $("#edit-count").val(next);
+            
+            $('.remove-me').click(function (e) {
+                e.preventDefault();
+                var fieldNum = this.id.charAt(this.id.length-1);
+                var fieldID = "#edit-field" + fieldNum;
+                $(this).remove();
+                $(fieldID).remove();
+            });
+        });
+        {% endif %}
+    });
+
+    $("#username").blur(function () {
+        if($("#username").val().trim() !== "") {
+            $.ajax({
+                type: "GET",
+                url: "/check_username/"+ $("#username").val()
+            }).done(function (data) {
+                if((data["exists"] && data["result"].id != "{{ user.id }}") || $("#username").val() == 'sayunsuperuser'){
+                    $('#error-username').text("This username is already taken.");
+                    $('#save-btn').prop('disabled', true);
+                } else {
+                    $('#error-username').text("");
+                    $('#save-btn').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#error-username').text("");
+        }
+    });
+
+    $("#edit-account-form").submit(function (event) {
+        if( $('#error-username').text() !== "") {
+            alert($('#error-username').text());
+            $('#save-btn').prop('disabled', true);
+            event.preventDefault();
+        }
+    });
+
+
+    var wrongOld = false;
+
+    $("#old-password").blur(function () {
+        if($("#old-password").val().trim() !== "") {
+            $.ajax({
+                type: "GET",
+                url: "/check_password/{{ user.id }}/" + $("#old-password").val().trim()
+            }).done(function (data) {
+                console.log(data);
+                if(!data["match"]) {
+                    wrongOld = true;
+                } else {
+                    wrongOld = false;
+                }
+            });
+        } else {
+            wrongOld = true;
+        }
+    });
+
+    $("#reset-password-form").submit(function (event) {
+        if( $("#new-password").val() != $("#new-password-2").val() ) {
+            $("#error-reset-pw").html('<div class="alert alert-danger">Passwords do not match</div>');
+            event.preventDefault();
+        }
+        if( $("#new-password").val().length < 7 ) {
+            $("#error-reset-pw").html('<div class="alert alert-danger">New password should be at least 7 characters long.</div>');
+            event.preventDefault();
+        }
+        if (wrongOld == true) {
+            $("#error-reset-pw").html('<div class="alert alert-danger">Wrong old password!</div>');
+            event.preventDefault();
+        }
+    });
+
+    $('#delete-account-button').click(function(e){
+        // CONFIRM DIALOG DELETE
+            var key = "{{user.id}}";
+            console.log(key);
+            $.ajax({
+                type: "GET",
+                url: "/account_delete/"+ key,
+            }).done(function (data) {
+                console.log(data);
+                if(data){
+                    if(data['user'].user_type == "Doctor"){
+                        $.ajax({
+                            type: "GET",
+                            url: "/account_delete_doctor/"+key,
+                        }).done(function(data){
+                            if(data.hasChildRecords){
+                                $.confirm({
+                                    title: 'Move to Archive',
+                                    content: 'The record you want to archive has records associated with it. Archive them first.',
+                                    buttons: {
+                                        OK: function () {
+                                            // $.alert('Confirmed!');
+                                        },
+                                    }
+                                });
+                                
+                            } else{
+                                $.confirm({
+                                    title: 'Move to Archive',
+                                    content: 'Are you sure you want to move this record to archive?',
+                                    buttons: {
+                                        Confirm: function () {
+                                            // $.alert('Confirmed!');
+                                            $.ajax({
+                                                type: "POST",
+                                                url: "/account_delete_confirmed/"+key,
+                                            }).done(function(data){
+                                                if(data.success){
+                                                    $.alert({
+                                                        title: 'Success',
+                                                        content: 'Record successfully moved to archive!'
+                                                    });
+                                                    window.location.href = "/account_list";
+                                                } else{
+                                                    $.alert({
+                                                        title: 'Error',
+                                                        content: 'An error occured.'
+                                                    });
+                                                }
+                                            });
+
+                                        },
+                                        Cancel: function () {
+                                            // $.alert('Canceled!');
+                                        },
+                                    }
+                                });
+                            }
+                        });
+                    } else{
+                        $.confirm({
+                            title: 'Move to Archive',
+                            content: 'Are you sure you want to move this record to archive?',
+                            buttons: {
+                                Confirm: function () {
+                                    // $.alert('Confirmed!');
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/account_delete_confirmed/"+key,
+                                    }).done(function(data){
+                                        if(data.success){
+                                            $.alert({
+                                                title: 'Success',
+                                                content: 'Record successfully moved to archive!'
+                                            });
+                                            window.location.href = "/account_list";
+                                        } else{
+                                            $.alert({
+                                                title: 'Error',
+                                                content: 'An error occured.'
+                                            });
+                                        }
+                                    });
+
+                                },
+                                Cancel: function () {
+                                    // $.alert('Canceled!');
+                                },
+                            }
+                        });
+                    }
+
+                } else{
+                    $.alert({
+                        title: 'Error',
+                        content: "The record doesn't exist."
+                    });
+                }
+
+                
+            });
+        });
+
+     
+</script>
+</html>

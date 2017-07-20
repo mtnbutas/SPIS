@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Home</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/styles.css">
+	<link rel="stylesheet" 	type="text/css"			href="../../static/css/font-awesome.min.css">
+	<script 				type="text/javascript" 	src="../../static/js/jquery.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+        $(window).load(function() {
+            // Animate loader off screen
+            $(".se-pre-con").fadeOut("slow");;
+        });
+    </script>
+    <style type="text/css">
+    	.no-js #loader { display: none;  }
+        .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("../../static/img/loading-heart.gif") center no-repeat #fff;
+        }
+    </style>
+</head>
+<body>
+	<div class="se-pre-con"></div>
+	<!-- NAVIGATION -->
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>                        
+	      </button>
+	      <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="navbar">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="/">Home</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	        <li><a href="#">{{ user.id }}</a></li>
+	        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+	<!-- END OF NAVIGATION -->
+
+	<div class="container-fluid main-container">
+		<!-- BREADCRUMBS -->
+		<ol class="breadcrumb">
+		  <li class="active">Home</li>
+		</ol>
+		<!-- END OF BREADCRUMBS -->
+		<center><h3>Welcome, {{ user.id }}!</h3></center><hr>
+
+		<div class="container-fluid">
+			{% if secretary or doctor!=null %}
+				<div class="row feature-row" style="padding-top: 20px">
+					<div class="col-sm-10 col-sm-offset-1">
+
+						<div class="col-xs-6 col-sm-3 feature">
+							<center>
+								<a href="/account_edit/{{ user.id }}">
+									<div class="feature-icon">
+										<i class="fa fa-user"></i>
+									</div>	
+					              	<h4>My Account</h4>
+					            </a>
+			              	</center>
+			            </div>
+			            <div class="col-xs-6 col-sm-3 feature">
+							<center>
+								<a href="/patient_list">
+					              	<div class="feature-icon">
+					              		<i class="fa fa-heartbeat"></i>
+					              	</div>
+					              	<h4>Patients</h4>	
+					             </a>
+			              	</center>
+			            </div>
+			            <div class="col-xs-6 col-sm-3 feature">
+							<center>
+				              	<a id="daily_const_id" href="/daily_consultation_list/">
+					              	<div class="feature-icon">
+					              		<i class="fa fa-sort-numeric-asc"></i>
+					              	</div>
+					              	<h4>Daily Consultation</h4>	
+					             </a>
+			              	</center>
+			            </div>
+			            <div class="col-xs-6 col-sm-3 feature">
+							<center>
+				              	<a href="">
+					              	<div class="feature-icon">
+					              		<i class="fa fa-ruble"></i>
+					              	</div>
+					              	<h4>Financial Report</h4>	
+					             </a>
+			              	</center>
+			            </div>
+			            
+			        </div>
+			    </div>
+			{% endif %}
+
+			{% if admin or superuser %}
+			    <div class="row feature-row">
+			        <div class="col-sm-10 col-sm-offset-1">
+			        	<div class="col-xs-6 col-sm-3 col-sm-offset-3 feature">
+							<center>
+				              	<a href="/account_list">
+					              	<div class="feature-icon">
+					              		<i class="fa fa-group"></i>
+					              	</div>
+					              	<h4>Users</h4>	
+					             </a>
+			              	</center>
+			            </div>
+			            <div class="col-xs-6 col-sm-3 feature">
+							<center>
+				              	<a href="/hcl_list">
+					              	<div class="feature-icon">
+					              		<i class="fa fa-hospital-o"></i>
+					              	</div>
+					              	<h4>Hospitals</h4>	
+					             </a>
+			              	</center>
+			            </div>
+			        </div>
+			    </div>
+			{% endif %}
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(window).ready(function() {
+		var cw = $('.feature-icon').width();
+		$('.feature-icon').css({'height':cw+'px'});
+		$('.feature-icon .fa').css({'font-size':(cw*0.46)+'px'});
+		$('.feature-icon .fa').css({'margin-top':(cw*0.27)+'px'});
+	});
+	$(window).resize(function() {
+		var cw = $('.feature-icon').width();
+		$('.feature-icon').css({'height':cw+'px'});
+		$('.feature-icon .fa').css({'font-size':(cw*0.46)+'px'});
+		$('.feature-icon .fa').css({'margin-top':(cw*0.27)+'px'});
+	});
+	{% if doctor %}
+	$("#daily_const_id").attr('href', $("#daily_const_id").attr('href') + '{{ user.id }}/'+ Date.now());
+	{% elif secretary %}
+	$("#daily_const_id").attr('href', $("#daily_const_id").attr('href') + '{{ firstDoctor }}/'+ Date.now());
+	{% endif %}
+</script>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Daily Consultations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css/styles.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
+    <script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <script type="text/javascript" src="../../static/js/jquery.js"></script>
+    <script type="text/javascript" src="../../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript"  src="../../static/js/jquery.date-dropdowns.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/isocra/TableDnD/master/js/jquery.tablednd.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+
+        .myDragClass {
+            background-color: #73c215;
+        }
+
+        td select {
+            width: 150px !important;
+        }
+
+        .ui-autocomplete {
+            z-index: 5000;
+        }
+        .date-div select {
+            background: #ffffff;
+            border: 1px solid #CCCCCC;
+            border-radius: 3px;
+            margin: 0;
+            width: 32% !important;
+            float: left;
+        }
+
+        .date-div select:nth-child(3){
+            margin: 0 2%;
+        }
+
+        .date-div select.invalid {
+            color: #E9403C;
+        }
+
+        #daily-queue-table tr:active {
+            background-color: #73c215;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>                        
+	      </button>
+                <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">{{session.user.id}}</a></li>
+                    <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- END OF NAVIGATION -->
+
+    <div class="container-fluid main-container">
+        <!-- BREADCRUMBS -->
+        <ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Daily Consultation</a></li>
+            <li>Reorder Queue</li>
+            <li class="active">{{ date_on_queue }}</li>
+        </ol>
+        <!-- END OF BREADCRUMBS -->
+        <center>
+            <h3>Daily Consultation</h3>
+        </center>
+        <hr>
+
+        <div class="container-fluid">
+            <div class="row feature-row" style="padding-top: 20px">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <div class="row form-horizontal">
+                        <div class="col-sm-6 col-md-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Doctor</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="{{ doctor_on_queue['username.title'] }} {{ doctor_on_queue['username.first_name'] }} {{ doctor_on_queue['username.middle_name'] }} {{ doctor_on_queue['username.last_name'] }} {{ doctor_on_queue['username.suffix'] }}" disabled>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-4 col-md-offset-4">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Date</label>
+                                <div class="col-sm-9">
+                                    <input type="text" value="{{ date_on_queue }}" class="form-control" disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="table-responsive">
+                        <table id="daily-queue-table" class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Name</th>
+                                    <th>Hospital/Clinic</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for single_consultation in daily_consultation_list %}
+                                <tr>
+                                    <td id="{{single_consultation['id']}}"></td>
+                                    <td>{{ single_consultation['parent_record.patient.first_name'] }} {{ single_consultation['parent_record.patient.middle_name'] }} {{ single_consultation['parent_record.patient.last_name'] }} {{ single_consultation['parent_record.patient.suffix'] }}</td>
+                                    <td>{{ single_consultation['parent_record.hospital.name'] }}</td>
+                                    <td>{{ single_consultation['status'] }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="button-group">
+                        <a class="btn btn-gray pull-right" href="" id="cancel-reorder-btn">Cancel</a>
+                        <a class="btn btn-lime pull-right" type="button" id="reorder-btn">Save</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+    var iCnt;
+    var date;
+
+    $(document).ready(function() { //DO NOT CHANGEEEEE
+        iCnt = 1;
+        $("#daily-queue-table tbody tr").each(function() {
+            var id = "tr" + parseInt(iCnt);
+            $(this).children().first().html(iCnt);
+            $(this).attr("id", id);
+            iCnt++;
+        });
+        $("#daily-queue-table").tableDnD({
+            onDragClass: "myDragClass",
+            onDrop: function(table, row) {
+                iCnt = 1;
+                $("#daily-queue-table tbody tr").each(function() {
+                    var id = "tr" + parseInt(iCnt);
+                    $(this).children().first().html(iCnt);
+                    $(this).attr("id", id);
+                    iCnt++;
+                });
+            }
+        });
+        $('#cancel-reorder-btn').attr('href', window.location.href.replace('reorder', 'daily_consultation_list'));
+    });
+
+    $('#reorder-btn').on('click', function(){
+        var queue = [];
+        
+        $('#daily-queue-table tbody').children('tr').each(function () {
+            queue.push({
+                key: $(this).children('td:first').attr('id'),
+                value: $(this).children('td:first').text()
+            });
+        });
+        
+        // console.log(queue);
+        $.ajax({
+            type: "POST",
+            url: window.location.href,
+            data: {
+                'queue': queue
+            }
+        }).done(function (data) {
+            window.location.replace(window.location.href.replace('reorder', 'daily_consultation_list'));
+        });
+    });
+
+</script>
+
+</html>

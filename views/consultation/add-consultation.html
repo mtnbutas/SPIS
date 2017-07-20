@@ -1,0 +1,314 @@
+<div class="row"  id="add-cc-view">
+    <div class="form-container col-md-8" style="padding: 20px">
+        <form id="add-cc-form" class="form-horizontal" role="form" method="POST" action="/clinic_consultation_add">
+            <input type="hidden" name="cc-p-id" id="cc-p-id" value="{{patient.id}}">
+            <legend><b>Add Clinic Consultation</b></legend>
+            <div>
+                <p class="text-danger" id="cc-error-response"></p>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="consultation-date">Consultation Date*</label>
+                <div class="col-sm-8 date-div" id="cc-date-div">
+                    <input type="hidden" name="cc-date" id="cc-date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="cc-doctor">Doctor*</label>
+                <div class="col-sm-8">
+                    {% if doctor == null %}
+                    <select class="form-control" id="hidden-cc-doctor" name="cc-doctor" required>
+                      <option value="" selected disabled>Select Doctor</option>
+                        {% for doctor in doctors %}
+                            <option value="{{doctor.id}}">{{doctor['username.first_name']}} {{doctor['username.middle_name']}} {{doctor['username.last_name']}}</option>
+                        {% endfor %}
+
+                    </select>
+                    {% else %}
+                        <input type="text" class="form-control" id="cc-doctor" value="{{user.first_name}} {{user.middle_name}} {{user.last_name}}" disabled>
+                        <input type="hidden" id="hidden-cc-doctor" name="cc-doctor" value="{{doctor.id}}">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="cc-hospital">Hospital/Clinic*</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="cc-hospital" name="cc-hospital" required>
+                      <option value="" selected disabled>Select Hospital/Clinic</option>
+
+                        {% for hospital in hospitals %}
+                            <option value="{{hospital.name}}">{{hospital.name}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            {% if doctor %}
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="cc-summary">Summary of Diagnosis*</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="cc-summary" id="cc-summary" required>
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="cc-detailed-diagnosis">Detailed Diagnosis*</label>
+              <div class="col-sm-8">
+                  <textarea class="form-control" rows="5" name="cc-detailed-diagnosis" id="cc-detailed-diagnosis"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="cc-notes">Notes</label>
+              <div class="col-sm-8">
+                  <textarea class="form-control" rows="5" name="cc-notes" id="cc-notes"></textarea>
+              </div>
+            </div>
+
+            <!-- MEDICATION LIST FOR IPT -->
+            <legend><b>Medications</b></legend>
+            <div class="table-responsive">
+                <table id="cc-list-medication" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" aria-label="..." id="add-cc-select-all-meds"/></th>
+                            <th>Name</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Type</th>
+                            <th>Instruction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-group">
+                <a class="btn btn-blue pull-right btn-icon" onclick="add_cc_delete_med()" name="delete" value="true" id="delete"><span class="glyphicon glyphicon-trash"></span></a>
+                <a class="btn btn-lime pull-right" id="cc-add-med-button" data-toggle="modal" data-target="#add-medication-modal"><span class="glyphicon glyphicon-plus"></span></a>
+            </div>
+             <!-- END OF MEDICATION LIST FOR IPT -->
+
+
+            <!-- MEDICAL PROCEDURES LIST FOR IPT -->
+            <legend><b>Medical Procedures</b></legend>
+            <div class="table-responsive">
+                <table id="cc-list-med-procedure" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" aria-label="..." id="add-cc-select-all-med-procedures"/></th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-group">
+                <a class="btn btn-blue pull-right btn-icon" onclick="add_cc_delete_med_procedure()" name="delete" value="true" id=""><span class="glyphicon glyphicon-trash"></span></button>
+                <a href class="btn btn-lime pull-right bnt-icon" id="cc-add-med-procedure-button" data-toggle="modal" data-target="#add-med-procedure-modal"><span class="glyphicon glyphicon-plus"></span></a>
+            </div>
+            <!-- END OF MEDICAL PROCEDURES LIST FOR IPT -->
+
+            <legend><b>Add Attachments</b></legend>
+            <div class="form-group">
+                <input id="add-cc-attachments" name="add-cc-attachments[]" type="file" multiple class="file-loading">
+            </div>
+            {% endif %}
+            <div class="button-group">
+                <a onclick="view_CC()" class="btn btn-gray pull-right">Cancel</a>
+                <button type="submit" class="btn btn-lime pull-right" id="save-btn">Save</button>    
+            </div>
+        </form>
+    </div>
+    <!-- BILLING FOR CC -->
+    <div class="col-md-4"></div>
+    <!-- END OF BILLING FOR CC -->
+</div>
+
+<script type="text/javascript">
+    {% if doctor %}
+    $(document).on('ready', function() {
+        $("#add-cc-attachments").fileinput({
+            uploadUrl: '/upload_files_cc_results',
+            browseOnZoneClick: true,
+            layoutTemplates: {
+                actions: '<div class="file-actions">\n' +
+                '    <div class="file-footer-buttons">\n' +
+                '        {delete} {zoom} {other}' +
+                '    </div>\n' +
+                '    {drag}\n' +
+                '    <div class="clearfix"></div>\n' +
+                '</div>'
+            },
+            uploadClass: 'btn btn-xs btn-default unique-name-add-cc hidden'
+        });
+    });
+    {% endif %}
+
+    $("#add-cc-form").submit(function (event) {
+        event.preventDefault();
+        cc_med_id_counter = 1;
+        cc_med_proc_id_counter = 1;
+
+
+        {% if doctor %}
+        var files = $('#add-cc-attachments').fileinput('getFileStack');
+        if(files.length != 0) {
+            $(".unique-name-add-cc").click();
+        } else {
+            var medication = [], med_procedure = [], billings = [];
+
+            for(var i = 0; i < add_cc_meds_table.rows().data().length; i++){
+                var name = add_cc_meds_table.rows().data()[i][1];
+                medication.push({
+                    name: name.substring(3, name.length-4),
+                    dosage: add_cc_meds_table.rows().data()[i][2],
+                    frequency: add_cc_meds_table.rows().data()[i][3],
+                    type: add_cc_meds_table.rows().data()[i][4],
+                    notes: add_cc_meds_table.rows().data()[i][5],
+                });
+
+                billings.push({
+                    description: name.substring(3, name.length-4)
+                });
+            }
+
+            for(var i = 0; i < add_cc_med_procedures_table.rows().data().length; i++){
+                var date = add_cc_med_procedures_table.rows().data()[i][1];
+                med_procedure.push({
+                    date: date.substring(3, date.length-4),
+                    description: add_cc_med_procedures_table.rows().data()[i][2],
+                    details: add_cc_med_procedures_table.rows().data()[i][3],
+                });
+
+                billings.push({
+                    description: add_cc_med_procedures_table.rows().data()[i][2]
+                });
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/clinic_consultation_add",
+                data: {
+                    'date': $("#cc-date").val(),
+                    'hospital': $("#cc-hospital").val(),
+                    'summary': $("#cc-summary").val(),
+                    'detailed-diagnosis': $("#cc-detailed-diagnosis").val(),
+                    'notes': $("#cc-notes").val(),
+                    'doctor': $("#hidden-cc-doctor").val(),
+                    'p-id': $("#cc-p-id").val(),
+                    'meds':  medication,
+                    'med_procedures': med_procedure,
+                    'billings': billings,
+                }
+            }).done(function (data) {
+                if(data.success) {
+                    $('#list-cc-view').show();
+                    $('#add-cc-view').hide();
+                    showSnackBar('Consultation successfully added.');
+                } else {
+                    $("#cc-error-response").text(data.error);
+                }
+            });
+        }
+        {% else %}
+        $.ajax({
+            type: "POST",
+            url: "/clinic_consultation_add",
+            data: {
+                'date': $("#cc-date").val(),
+                'hospital': $("#cc-hospital").val(),
+                'doctor': $("#hidden-cc-doctor").val(),
+                'p-id': $("#cc-p-id").val(),
+            }
+        }).done(function (data) {
+            if(data.success) {
+                $('#list-cc-view').show();
+                $('#add-cc-view').hide();
+                showSnackBar('Consultation successfully added.');
+            } else {
+                $("#cc-error-response").text(data.error);
+            }
+        });
+        {% endif %}
+    });
+
+    {% if doctor %}
+    $('#add-cc-attachments').on('filebatchuploadcomplete', function (event, files, extra) {
+        console.log('File batch upload complete');
+        $("#add-cc-form").submit();
+    });
+    {% endif %}
+
+
+    // DELETING ROWS FOR MEDS
+    {% if doctor %}
+    $('#add-cc-select-all-meds').change(function(){  //"select all" change 
+        var status = this.checked; // "select all" checked status
+        $('#cc-list-medication tbody input:checkbox').each(function(){ //iterate all listed checkbox items
+            this.checked = status; //change ".checkbox" checked status
+        });
+    });
+
+    $("#cc-list-medication tbody").on('click', ':checkbox', function(){
+        $('#add-cc-select-all-meds').prop('checked', $('#cc-list-medication tbody input:checkbox').length == $('#cc-list-medication tbody input:checkbox:checked').length);
+    });
+
+    function add_cc_delete_med(){
+        var med_rows= [];
+
+        $("#cc-list-medication tbody input:checkbox").each(function(){
+            var $this = $(this);
+            if($this.is(":checked")){
+                med_rows.push($this.parent().parent());
+            }
+        });
+
+        if(med_rows.length > 0 && confirm("Are you sure you want to delete Medication record/s? This cannot be undone.")){
+            for(var x = 0; x < med_rows.length; x++ ){
+                add_cc_meds_table.row(med_rows[x]).remove().draw();
+            }
+
+            $('#add-cc-select-all-meds').prop('checked', false);
+
+        }
+    }
+    {% endif %}
+    // 
+
+
+    // DELETING ROWS FOR MED PROCEDURES
+    {% if doctor %}
+    $('#add-cc-select-all-med-procedures').change(function(){  //"select all" change 
+        var status = this.checked; // "select all" checked status
+        $('#cc-list-med-procedure tbody input:checkbox').each(function(){ //iterate all listed checkbox items
+            this.checked = status; //change ".checkbox" checked status
+        });
+    });
+
+    $("#cc-list-med-procedure tbody").on('click', ':checkbox', function(){
+        $('#add-cc-select-all-med-procedures').prop('checked', $('#cc-list-med-procedure tbody input:checkbox').length == $('#cc-list-med-procedure tbody input:checkbox:checked').length);
+    });
+
+    function add_cc_delete_med_procedure(){
+        var med_proc_rows= [];
+
+        $("#cc-list-med-procedure tbody input:checkbox").each(function(){
+            var $this = $(this);
+            if($this.is(":checked")){
+                med_proc_rows.push($this.parent().parent());
+            }
+        });
+
+        if(med_proc_rows.length > 0 && confirm("Are you sure you want to delete Medical Procedure record/s? This cannot be undone.")){
+            for(var x = 0; x < med_proc_rows.length; x++ ){
+                add_cc_med_procedures_table.row(med_proc_rows[x]).remove().draw();
+            }
+
+            $('#add-cc-select-all-med-procedures').prop('checked', false);
+
+        }
+    }
+    {% endif %}
+    // 
+</script>

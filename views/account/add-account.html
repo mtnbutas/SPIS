@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Add an Account</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/bootstrap.css">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/styles.css">
+    <script                 type="text/javascript"  src="../../static/js/jquery.js"></script>
+    <script                 type="text/javascript"  src="../../static/js/bootstrap.min.js"></script>
+    <script                 type="text/javascript"  src="../../static/js/upload-image.js"></script>
+</head>
+
+<body>
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
+          <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Home</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">{{session.user.id}}</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- END OF NAVIGATION -->
+
+    <div class="container-fluid main-container">
+        <!-- BREADCRUMBS -->
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li><a href="/account_list">Users</a></li>
+          <li class="active">Add Account</li>
+        </ol>
+        <!-- END OF BREADCRUMBS -->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8 col-sm-offset-2 form-container">
+                    <form id="add-account-form" class="form-horizontal" role="form" method="POST" action="/add_account" enctype="multipart/form-data">
+                        <legend><b>Add Account</b></legend>
+                        <!-- photo and digital signature (if user type==doctor) -->
+                        <div class="col-xs-12 col-md-5 col-md-push-7">
+                            <div class="col-md-8 col-md-offset-2">
+                                <div class="form-group">
+                                    <center><label>Photo:</label></center>
+                                    <img id='img-upload' src="../../static/img/user.png" />
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <span class="btn btn-default btn-file">
+                                                Browse… <input type="file" id="imgInp" name="photo">
+                                            </span>
+                                        </span>
+                                        <input type="text" class="form-control" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="doctor-fields">
+                                    <div class="form-group">
+                                        <center><label>Digital Signature:</label></center>
+                                        <img id='digital-sign-upload'/>
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <span class="btn btn-default btn-file">
+                                                    Browse… <input type="file" id="digitalSignInp" name="signature">
+                                                </span>
+                                            </span>
+                                            <input type="text" class="form-control" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- user account info -->
+                        <div class="col-xs-12 col-md-7 col-md-pull-5">
+                            <fieldset>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="username">Username*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="username" id="username" maxlength="20" required>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-danger" id="error-username"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="username">User Type*</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="user-type" name="user_type" required>
+                                          <option value="" selected disabled>Select a User Type</option>
+                                          <option value="Doctor">Doctor</option>
+                                          <option value="Secretary">Secretary</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="username">Access Rights*</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="access-rights" name="access_rights" required>
+                                          <option value="" selected disabled>Select Access Rights</option>
+                                          <option value="Normal">Normal</option>
+                                          <option value="Admin">Administrator</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="title">Title</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" id="title" name="title" required>
+                                          <option value="" selected disabled>Select Title</option>
+                                          {% for title in title_types %}
+                                          <option value="{{ title }}">{{ title }}</option>
+                                          {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="last-name">Last Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="last_name" id="last-name" maxlength="30" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="first-name">First Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="first_name" id="first-name" maxlength="50" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="middle-name">Middle Name*</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="middle_name" id="middle-name" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="suffix">Suffix</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="suffix" maxlength="30" id="suffix">
+                                    </div>
+                                </div>
+                                <input type="hidden" name="count" id="count" value="1" />
+                                <div class="form-group control-group" id="fields">
+                                    <label class="control-label col-sm-4" for="field1">Contact #(s)</label>
+                                    <div class="controls col-sm-8" id="contacts"> 
+                                        <div class="input-append" id="contact-list">
+                                            <div id="field"><input autocomplete="off" class="form-control dynamic-field" id="field1" name="field1" type="text" placeholder="contact number" data-items="8" style="width: 85% !important;"/><button id="b1" class="btn btn-success add-more" type="button" title="add another contact" style="width:15% !important;">+</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="email-add">E-mail Address</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="email_add" maxlength="50" id="email-add">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-danger" id="error-email"></p>
+                                </div>
+                                <div class="doctor-fields">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label" for="license-num">License Number*</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="license_num" id="license-num">
+                                        </div>
+                                    </div>
+                                    <!-- <p class="text-danger" id="error-license-no"></p> -->
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label" for="license-num">PTR Number*</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="ptr_num" id="ptr-num">
+                                        </div>
+                                    </div>
+                                    <!-- <p class="text-danger" id="error-ptr-num"></p> -->
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label" for="s2-license-num">S2 License Number*</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" name="s2_license_num" id="s2-license-num">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <p class="text-danger" id="error-s2-num"></p> -->
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="password">Set Password*</label>
+                                    <div class="col-sm-8">
+                                        <input type="password" class="form-control" name="password" id="password" required="false" pattern=".{7,}" autocomplete="off"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-danger" id="error-password-length"></p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" for="password2">Retype Password*</label>
+                                    <div class="col-sm-8">
+                                        <input type="password" class="form-control" name="password2" id="password2" required="false" pattern=".{7,}"  autocomplete="off"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-danger" id="error-password"></p>
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <p name="error">{{ error }}</p>
+
+                        <div class="button-group">
+                            <a href="/account_list" class="btn btn-gray pull-right">Cancel</a>
+                            <button type="submit" class="btn btn-lime pull-right" id="save-btn">Save</button>    
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    $('#user-type').on('change', function(){
+        if ($(this).val()=='Doctor') {
+            $('.doctor-fields').slideDown(600);
+            $('.doctor-fields input').prop('required', true);
+            $('#digitalSignInp').prop('required', false);
+        } 
+        else {
+            $('.doctor-fields').slideUp(600);
+            $('.doctor-fields input').prop('required', false);
+        }
+    });
+    $(document).ready(function(){
+        var next = 1;
+        $("#b1").click(function(e){
+            e.preventDefault();
+            var addto = "#field" + next;
+            var addRemove = "#field" + (next);
+            next = next + 1;
+            var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="field' + next + '" name="field' + next + '" type="text" placeholder="contact number" style="width: 85% !important;">';
+            var newInput = $(newIn);
+            var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact" style="width: 15% !important;">-</button></div><div id="field">';
+            var removeButton = $(removeBtn);
+            $(addto).after(newInput);
+            $(addRemove).after(removeButton);
+            $("#field" + next).attr('data-source',$(addto).attr('data-source'));
+            $("#count").val(next);  
+            
+                $('.remove-me').click(function(e){
+                    e.preventDefault();
+                    var fieldNum = this.id.charAt(this.id.length-1);
+                    var fieldID = "#field" + fieldNum;
+                    $(this).remove();
+                    $(fieldID).remove();
+                });
+        }); 
+    });
+
+    $("#username").blur(function() {
+        if($("#username").val().trim() !== "") {
+            $.ajax({
+                type: "GET",
+                url: "/check_username/"+ $("#username").val()
+            }).done(function(data) {
+                console.log($("#username").val());
+                if(data["exists"] || $("#username").val() == 'sayunsuperuser') {
+                    $('#error-username').text("This username already exists.");
+                    $('#save-btn').prop('disabled', true);
+                } else {
+                    $('#error-username').text("");
+                    $('#save-btn').prop('disabled', false);
+                }
+            });
+        } else {
+            $('#error-username').text("");
+        }
+    });
+
+    $("#email-add").blur(function() {
+        if($("#email-add").val().trim() !== "") {
+            var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            if (!re.test($("#email-add").val().trim())) {
+                $('#error-email').text("Invalid Email");
+                $('#save-btn').prop('disabled', true);
+            } else {
+                $('#error-email').text("");
+                $('#save-btn').prop('disabled', false);
+            }
+        }
+    });
+
+    $("#password").blur(function() {
+        if($("#password").val().length < 7){
+            $('#error-password-length').text("Password should be at least 7 characters long.");
+            $('#save-btn').prop('disabled', true);
+        }
+        else{
+            $('#error-password-length').text("");
+            $('#save-btn').prop('disabled', false);
+        }
+    });
+    $("#password2").on('input',function(e){
+        if($("#password").val() != $("#password2").val()){
+            $('#error-password').text("Passwords do not match.");
+            $('#save-btn').prop('disabled', true);
+        } else {
+            $('#error-password').text("");
+            $('#save-btn').prop('disabled', false);
+        }          
+    });
+    // $("#license-num").blur(function() {
+    //     if($("#license-num").val().trim() !== "") {
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/check_license_num/"+ $("#license-num").val()
+    //         }).done(function(data) {
+    //             if(data["exists"]) {
+    //                 $('#error-license-no').text("This license no. is already taken.");
+    //             } else {
+    //                 $('#error-license-no').text("");
+    //             }
+    //         });
+    //     }
+    //     // if username exists
+    //     // $("#username").addClass(".error-field");
+    //     // else
+    //     // $("#username").removeClass(".error-field");
+    //     // $("#username").addClass(".success-field");
+    // });
+
+    // $("#ptr-num").blur(function() {
+    //     if($("#ptr-num").val().trim() !== "") {
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/check_ptr_num/"+ $("#ptr-num").val()
+    //         }).done(function(data) {
+    //             if(data["exists"]) {
+    //                 $('#error-ptr-num').text("This PTR no. is already taken.");
+    //             } else {
+    //                 $('#error-ptr-num').text("");
+    //             }
+    //         });
+    //     }
+    //     // if username exists
+    //     // $("#username").addClass(".error-field");
+    //     // else
+    //     // $("#username").removeClass(".error-field");
+    //     // $("#username").addClass(".success-field");
+    // });
+    
+    // $("#s2-license-num").blur(function() {
+    //     if($("#s2-license-num").val().trim() !== "") {
+    //         $.ajax({
+    //             type: "GET",
+    //             url: "/check_s2_license_num/"+ $("#s2-license-num").val()
+    //         }).done(function(data) {
+    //             if(data["exists"]) {
+    //                 $('#error-s2-num').text("This S2 License No. is already taken.");
+    //             } else {
+    //                 $('#error-s2-num').text("");
+    //             }
+    //         });
+    //     }
+    //     // if username exists
+    //     // $("#username").addClass(".error-field");
+    //     // else
+    //     // $("#username").removeClass(".error-field");
+    //     // $("#username").addClass(".success-field");
+    // });
+
+    $( "#add-account-form" ).submit(function( event ) {
+        if( $('#error-username').text() !== "") {
+            alert($('#error-username').text());
+            event.preventDefault();
+        }
+
+        if ($("#password").val().length < 7) {
+            $('#error-password-length').text("Password should be at least 7 characters long.");
+            $('#save-btn').prop('disabled', true);
+            event.preventDefault();
+        }
+        else {
+            $('#error-password-length').text("");
+            $('#save-btn').prop('disabled', false);
+
+            if ($("#password").val() != $("#password2").val()) {
+                $('#error-password').text("Passwords do not match.");
+                $('#save-btn').prop('disabled', true);
+                event.preventDefault();
+            } else {
+                $('#error-password').text("");
+                $('#save-btn').prop('disabled', false);
+            }      
+        }
+    });
+
+</script>
+</html>

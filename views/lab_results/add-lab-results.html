@@ -1,0 +1,112 @@
+<div class="row"  id="add-lab-view">
+    <div class="form-container col-md-8" style="padding: 20px">
+        <form id="add-lab-form" class="form-horizontal" role="form" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="lab-patient-id" id="lab-patient-id" value="{{patient.id}}">
+            <legend><b>Add Laboratory Result</b></legend>
+            <div>
+                <p class="text-danger" id="lab-error-response"></p>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="lab-date">Date*</label>
+                <div class="col-sm-8">
+                    <input type="date" class="form-control" name="date" id="lab-date" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="lab-hospital">Hospital/Clinic*</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="lab-hospital" name="hospital" required>
+                        <option value="" selected disabled>Select Hospital/Clinic</option>
+                        {% for hospital in hospitals %}
+                            <option value="{{ hospital.name }}">{{ hospital.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="lab-description">Description*</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" rows="5" name="description" id="lab-description"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="lab-notes">Notes</label>
+                <div class="col-sm-8">
+                    <textarea class="form-control" rows="5" name="notes" id="lab-notes"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="lab-attachments">Select File</label>
+                <div class="col-sm-8">
+                    <input id="add-lab-attachments" name="add-lab-attachments[]" type="file" multiple class="file-loading">
+                </div>
+            </div>
+            <div class="button-group">
+                <a onclick="view_lab()" class="btn btn-gray pull-right">Cancel</a>
+                <button type="submit" class="btn btn-lime pull-right">Save</button>
+            </div>
+        </form>
+    </div>
+    <!-- BILLING FOR CC -->
+    <div class="col-md-4"></div>
+    <!-- END OF BILLING FOR CC -->
+</div>
+
+
+
+
+    
+<script>
+    $(document).on('ready', function() {
+        $("#add-lab-attachments").fileinput({
+            // showUpload: false,
+            uploadUrl: '/upload_files_lab_results',
+            browseOnZoneClick: true,
+            layoutTemplates: {
+                actions: '<div class="file-actions">\n' +
+                '    <div class="file-footer-buttons">\n' +
+                '        {delete} {zoom} {other}' +
+                '    </div>\n' +
+                '    {drag}\n' +
+                '    <div class="clearfix"></div>\n' +
+                '</div>'
+            },
+            uploadClass: 'btn btn-xs btn-default unique-name-add-lab hidden'
+        });
+    });
+
+    $( "#add-lab-form" ).submit(function (event) {
+        var files = $('#add-lab-attachments').fileinput('getFileStack');
+        if(files.length != 0) {
+            $(".unique-name-add-lab").click();
+            event.preventDefault();
+        } else {
+            event.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: "/laboratory_add",
+                data: {
+                    date: $("#lab-date").val(),
+                    hospital: $("#lab-hospital").val(),
+                    description: $("#lab-description").val(),
+                    notes: $("#lab-notes").val(),
+                    patient_id: $("#lab-patient-id").val(),
+                }
+            }).done(function (data) {
+                if(data.success) {
+                    $('#list-lab-view').show();
+                    $('#add-lab-view').hide();
+                    $('#edit-lab-view').hide();
+                    showSnackBar('Lab Result successfully added.');
+                } else {
+                    $("#lab-error-response").text(data.error);
+                }
+            });
+        }
+    });
+
+    $('#add-lab-attachments').on('filebatchuploadcomplete', function (event, files, extra) {
+        console.log('File batch upload complete');
+        $("#add-lab-form").submit();
+    });
+</script>

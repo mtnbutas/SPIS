@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Patient Information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  type="text/css" href="../../static/css/bootstrap.css">
+    <link rel="stylesheet"  type="text/css" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet"  type="text/css" href="../../static/css/styles.css">
+    <script type="text/javascript"  src="../../static/js/jquery.js"></script>
+    <script type="text/javascript"  src="../../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript"  src="../../static/js/upload-image.js"></script>
+    <script type="text/javascript"  src="../../static/js/jquery.date-dropdowns.js"></script>
+    <script type="text/javascript"  src="../../static/js/responsive-tabs.js"></script>
+    <script type="text/javascript"  src="../../static/js/mimes.js"></script>
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/bootstrap.min.3.3.7.css">
+    <link rel="stylesheet"  type="text/css"         href="../../static/css/dataTables.bootstrap.min.css">
+    <script                 type="text/javascript"  src="../../static/js/jquery.dataTables.min.js"></script>
+    <script                 type="text/javascript"  src="../../static/js/dataTables.bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="../../static/js/fileinput.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="../../static/css/fileinput.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/css/fileinput-rtl.min.css">
+
+
+    <link rel="stylesheet" href="../../static/css/jquery-confirm.min.css">
+    <script src="../../static/js/jquery-confirm.min.js"></script>
+
+    <script type="text/javascript">
+        $(window).load(function() {
+            // Animate loader off screen
+            $(".se-pre-con").fadeOut("slow");;
+        });
+    </script>
+    <style>
+        .date-div select {
+            background: #ffffff;
+            border: 1px solid #CCCCCC;
+            border-radius: 3px;
+            margin: 0;
+            width: 32% !important;
+            float: left;
+        }
+
+        .date-div select:nth-child(3){
+            margin: 0 2%;
+        }
+
+        .date-div select.invalid {
+            color: #E9403C;
+        }
+        .no-js #loader { display: none;  }
+        .js #loader { display: block; position: absolute; left: 100px; top: 0; }
+        .se-pre-con {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: url("../../static/img/loading-heart.gif") center no-repeat #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="se-pre-con"></div>
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
+          <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/">Home</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">{{session.user.id}}</a></li>
+            <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- END OF NAVIGATION -->
+
+    <div id="snackbar"></div>
+
+    <div class="container-fluid main-container">
+        <!-- BREADCRUMBS -->
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li><a href="/patient_list">Patients List</a></li>
+          <li class="active">Patient Name here</li>
+        </ol>
+        <!-- END OF BREADCRUMBS -->
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="form-container">
+                    <ul class="nav nav-tabs responsive" id="myTab">
+                        <li id="tab-patient-info"><a href="#patient-info">Patient Information</a></li>
+                        <li id="tab-notes"><a href="#notes">Notes</a></li>
+                        <li id="tab-consultations"><a href="#consultations">Clinic Consultations</a></li>
+                        <li id="tab-inpatient"><a href="#ip-treatments">In-Patient Treatments</a></li>
+                        <li id="tab-outpatient"><a href="#op-treatments">Out-Patient Treatments</a></li>
+                        <li id="tab-labs"><a href="#laboratories">Lab Results</a></li>
+                        <li id="tab-diagnoses"><a href="#diagnoses">Diagnoses</a></li>
+                        <li id="tab-medications"><a href="#medication">Medications</a></li>
+                        <li id="tab-billing"><a href="#billing">Billings</a></li>
+                    </ul>
+
+                    <div class="tab-content responsive">
+                        <!-- PATIENT INFO -->
+                        <div class="tab-pane" id="patient-info">
+                            {% include "../patient/edit-patient-info.html" %}
+                        </div>
+                        <!-- END OF PATIENT INFO -->
+                        <!-- NOTES -->
+                        <div class="tab-pane" id="notes">
+                            {% include "../patient/edit-patient-notes.html" %}
+                        </div>
+                        <!-- END OF NOTES -->
+                        <!-- CONSULTATIONS -->
+                        <div class="tab-pane" id="consultations">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">   
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a id="list-cc-view-link" onclick="view_CC()">Back to Consultation List</a><hr>
+                                    <!-- END OF BASIC PATIENT INFO -->
+
+
+                                    <!-- CONSULTATION TABLE -->
+                                        {% include "../consultation/list-consultation.html" %}
+                                    <!-- END OF CONSULTATION TABLE -->
+                                    <!-- ADD NEW CONSULTATION RECORD -->
+                                        {% include "../consultation/add-consultation.html" %}
+                                    <!-- END OF ADDING NEW CONSULTATION RECORD -->
+                                    <!-- VIEW CONSULTATION RECORD -->
+                                        {% include "../consultation/edit-consultation.html" %}
+                                    <!--  -->   
+
+                                </div>
+                            </div>   
+                        </div>
+                        <!-- END OF CONSULTATIONS -->
+
+                        <!-- IP-TREATMENTS -->
+                        <div class="tab-pane" id="ip-treatments">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">   
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a id="list-ipt-view-link" onclick="view_IPT()">Back to In-Patient Treatment List</a><hr>
+                                    <!-- END OF BASIC PATIENT INFO -->
+
+
+                                    <!-- IPT TABLE -->
+                                        {% include "../inpatients/list-patient-ipt.html" %}
+                                    <!-- END OF IPT TABLE -->
+                                    <!-- ADD NEW IPT RECORD -->
+                                        {% include "../inpatients/add-patient-ipt.html" %}
+                                    <!-- END OF ADDING NEW IPT RECORD -->
+                                    <!-- VIEW IPT RECORD -->
+                                        {% include "../inpatients/edit-patient-ipt.html" %}
+                                    <!--  -->                                   
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END OF IP-TREATMENTS -->
+
+
+                        <!-- OP-TREATMENTS -->
+                        <div class="tab-pane" id="op-treatments">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a id="list-opt-view-link" onclick="view_OPT()">Back to Out-Patient Treatment List</a>
+                                    <hr>
+
+
+                                    <!-- OPT TABLE -->
+                                        {% include "../outpatients/list-patient-opt.html" %}
+                                    <!-- END OF OPT TABLE -->
+                                    <!-- ADD NEW OPT RECORD -->
+                                        {% include "../outpatients/add-patient-opt.html" %}
+                                    <!-- END OF ADDING NEW OPT RECORD -->
+                                    <!-- VIEW OPT RECORD -->
+                                        {% include "../outpatients/edit-patient-opt.html" %}
+                                    <!-- END OF VIEW OPT RECORD -->                                   
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END OF OP TREATMENTS -->
+
+
+
+                        <!-- LABORATORY RESULTS -->
+                        <div class="tab-pane" id="laboratories">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a id="list-lab-view-link" onclick="view_lab()">Back to Lab Results List</a>
+                                    <hr>
+
+
+                                    <!-- LAB RESULTS TABLE -->
+                                        {% include "../lab_results/list-lab-results.html" %}
+                                    <!-- END OF LAB RESULTS TABLE -->
+                                    <!-- ADD NEW LAB RESULTS RECORD -->
+                                        {% include "../lab_results/add-lab-results.html" %}
+                                    <!-- END OF ADDING NEW LAB RESULTS RECORD -->
+                                    <!-- VIEW LAB RESULTS RECORD -->
+                                        {% include "../lab_results/edit-lab-results.html" %}
+                                    <!-- END OF VIEW LAB RESULTS RECORD -->                               
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END OF LABORATORY RESULTS -->
+
+                        <!-- MEDICATION RESULTS -->
+                        <div class="tab-pane" id="medication">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a id="list-medication-view-link" onclick="view_lab()">Back to Medications List</a>
+                                    <hr>
+                                    <!-- MEDICATION TABLE -->
+                                        {% include "../medication/list-medications.html" %}
+                                    <!-- END OF MEDICATION TABLE -->                    
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END OF MEDICATION RESULTS -->
+
+                        <!-- DIAGNOSES RESULTS -->
+                        <div class="tab-pane" id="diagnoses">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-10 col-md-offset-1">
+                                    <!-- BASIC PATIENT INFO -->
+                                    <div class="row" style="margin-top: 40px">
+                                        <div class="col-md-6">
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient ID</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.id}}" disabled>
+                                                </div>
+                                            </div>                                       
+                                            <div class="row form-group">
+                                                <label class="col-sm-3 control-label" for="patient-id">Patient Name</label>
+                                                <div class="col-sm-6">
+                                                    <input type="text" class="form-control" id="patient-id" value="{{patient.first_name}} {{patient.middle_name}} {{patient.last_name}}" disabled>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- <a id="list-diagnoses-view-link" onclick="view_diagnoses()">Back to Diagnoses List</a> -->
+                                    <hr>
+                                    <!-- DIAGNOSES TABLE -->
+                                        {% include "../diagnoses/list-diagnoses.html" %}
+                                    <!-- END OF DIAGNOSES TABLE -->                    
+                                </div>
+                            </div>
+                        </div>
+                        <!-- END OF DIAGNOSES RESULTS -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% if doctor %}
+<!-- MODALSSSS -->
+    <!-- MODAL ADD MEDICATION -->
+    <div class="modal fade" id="add-medication-modal" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+                    <h4 class="modal-title" style="float:left"><strong>Add Medication</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form id="add-med-form" class="form-horizontal" method="POST" action="">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-name">Name*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="add-med-name" id="add-med-name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-dosage">Dosage*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="add-med-dosage" id="add-med-dosage" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-frequency">Frequency*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="add-med-frequency" id="add-med-frequency" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Type*</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-control" name="add-med-type" id="add-med-type" required>
+                                                  <option value="" selected disabled>----</option>
+                                                  <option value="Maintenance">Maintenance</option>
+                                                  <option value="Non-Maintenance">Non-Maintenance</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-instructions">Instructions</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="add-med-instructions" id="add-med-instructions"></textarea>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="button-group">
+                                        <a class="btn btn-gray pull-right" data-dismiss="modal">Cancel</a>
+                                        <button type="submit" class="btn btn-lime pull-right" id="add-med-btn">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MODAL ADD MEDICATION -->
+
+
+
+    <!-- MODAL FOR ADD MEDICAL PROCEDURES -->
+     <div class="modal fade" id="add-med-procedure-modal" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+                    <h4 class="modal-title" style="float:left"><strong>Add Medical Procedure</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form id="add-med-procedure-form" class="form-horizontal" method="POST" action="">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-procedure-date">Date*</label>
+                                            <div class="col-sm-9 col-md-8 date-div" id="add-med-procedure-date">
+                                                <input type="hidden" id="med-procedure-date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-procedure-description">Description</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="add-med-procedure-description" id="add-med-procedure-description"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="add-med-procedure-details">Details</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="add-med-procedure-details" id="add-med-procedure-details"></textarea>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="button-group">
+                                        <a class="btn btn-gray pull-right" data-dismiss="modal">Cancel</a>
+                                        <button type="submit" class="btn btn-lime pull-right" id="add-med-procedure-btn">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END OF MEDICAL PROCEDURES MODAL -->
+
+
+
+    <!-- MODAL EDIT MEDICATION -->
+    <div class="modal fade" id="edit-medication-modal" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+                    <h4 class="modal-title" style="float:left"><strong>Edit Medication</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form id="edit-med-form" class="form-horizontal" method="POST" action="">
+                                    <fieldset>
+                                        <input type="hidden" id="caller-element"/>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-name">Name*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="edit-med-name" id="edit-med-name" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-dosage">Dosage*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="edit-med-dosage" id="edit-med-dosage" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-frequency">Frequency*</label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" name="edit-med-frequency" id="edit-med-frequency" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">Type*</label>
+                                            <div class="col-sm-9">
+                                                <select class="form-control" name="edit-med-type" id="edit-med-type" required>
+                                                  <option value="" selected disabled>----</option>
+                                                  <option value="Maintenance">Maintenance</option>
+                                                  <option value="Non-Maintenance">Non-Maintenance</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-instructions">Instructions</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="edit-med-instructions" id="edit-med-instructions"></textarea>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="button-group">
+                                        <a class="btn btn-gray pull-right" data-dismiss="modal">Cancel</a>
+                                        <button type="submit" class="btn btn-lime pull-right" id="edit-med-btn">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END MODAL EDIT MEDICATION -->
+
+
+
+    <!-- MODAL FOR EDIT MEDICAL PROCEDURES -->
+     <div class="modal fade" id="edit-med-procedure-modal" role="dialog">
+        <div class="modal-dialog">
+          <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+                    <h4 class="modal-title" style="float:left"><strong>Edit Medical Procedure</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <form id="edit-med-procedure-form" class="form-horizontal" method="POST" action="">
+                                    <fieldset>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-procedure-date">Date*</label>
+                                            <div class="col-sm-9 col-md-8 date-div" id="edit-med-procedure-date">
+                                                <input type="hidden" id="edited-med-procedure-date">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-procedure-description">Description</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="edit-med-procedure-description" id="edit-med-procedure-description"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label" for="edit-med-procedure-details">Details</label>
+                                            <div class="col-sm-9">
+                                                <textarea rows="5" class="form-control" name="edit-med-procedure-details" id="edit-med-procedure-details"></textarea>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="button-group">
+                                        <a class="btn btn-gray pull-right" data-dismiss="modal">Cancel</a>
+                                        <button type="submit" class="btn btn-lime pull-right" id="edit-med-procedure-btn">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END OF EDIT MEDICAL PROCEDURES MODAL -->
+<!-- END OF MODAAAALLSSS -->
+{% endif %}
+</body>
+
+<script type="text/javascript">
+
+    var ipt_med_id_counter = 1;
+    var ipt_med_proc_id_counter = 1;
+    var opt_med_id_counter = 1;
+    var opt_med_proc_id_counter = 1;
+    var cc_med_id_counter = 1;
+    var cc_med_proc_id_counter = 1;
+
+    var edit_med_id;
+    var edit_med_procedure_id;
+
+    $(window).on('hashchange',function() {
+        var url = window.location.href;
+
+        if(url.indexOf("#") > -1){
+            $('a[href="' + url.substring(url.indexOf("#")) + '"').tab('show');
+
+            $( '.panel-collapse' ).removeClass( 'in' );
+            $( '.panel-body' ).removeClass( 'active' );
+            $('a[class="accordion-toggle"]').addClass('collapsed');
+            $('.collapsed').attr('aria-expanded', false);
+            $( '.panel-collapse' ).attr('aria-expanded', false);
+
+            $(url.substring(url.indexOf("#")) ).addClass('active');
+            $('#collapse-' + url.substring(url.indexOf("#") + 1)).addClass('in');
+            $('#collapse-' + url.substring(url.indexOf("#") + 1)).css("height", "auto");
+            $('#collapse-' + url.substring(url.indexOf("#") + 1)).attr('aria-expanded', true);
+            $('a[href="' + '#collapse-' + url.substring(url.indexOf("#") + 1) + '"]').removeClass('collapsed');
+            $('a[href="' + '#collapse-' + url.substring(url.indexOf("#") + 1) + '"]').attr('aria-expanded', true);
+
+            if($('#ip-treatments').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/ipt_list/{{patient.id}}",
+                }).done(updateIPTListRows);
+            }
+
+            else if($('#op-treatments').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/opt_list/{{patient.id}}",
+                }).done(updateOPTListRows);
+            }
+
+            else if($('#laboratories').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/lab_results_list/{{patient.id}}",
+                }).done(updateLabListRows);
+            }
+
+            else if($('#consultations').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/clinic_consultation_list/{{patient.id}}",
+                }).done(updateCCListRows);
+            }
+
+            else if($('#medication').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/patient_medication_list/{{patient.id}}",
+                }).done(updateMedicationListRows);
+            }
+
+            else if($('#diagnoses').hasClass('active')){
+                $.ajax({
+                    type: "GET",
+                    url: "/patient_diagnoses_list/{{patient.id}}",
+                }).done(updateDiagnosesListRows);
+            }
+        }
+        else{
+            $('a[href="#patient-info"]').tab('show');
+
+            $( '.panel-collapse' ).removeClass( 'in' );
+            $( '.panel-body' ).removeClass( 'active' );
+            $('a[class="accordion-toggle"]').addClass('collapsed');
+            $('.collapsed').attr('aria-expanded', false);
+            $( '.panel-collapse' ).attr('aria-expanded', false);
+
+            $('#patient-info').addClass('active');
+            $('#collapse-patient-info').addClass('in');
+            $('#collapse-patient-info').css("height", "auto");
+            $('#collapse-patient-info').attr('aria-expanded', true);
+            $('a[href="#collapse-patient-info"]').removeClass('collapsed');
+            $('a[href="#collapse-patient-info"]').attr('aria-expanded', true);
+        }
+    });
+
+    var IPT_List_Table;
+    var OPT_List_Table;
+    var CC_List_Table;
+    var Medication_List_Table;
+    var Diagnoses_List_Table;
+
+    (function($) {
+      fakewaffle.responsiveTabs(['xs', 'sm']);
+    })(jQuery);
+
+    $( '#myTab a' ).click( function ( e ) {
+    // e.preventDefault();
+        $( this ).tab( 'show' );
+    } );
+
+    $(document).ready(function(){
+        var url = window.location.href;
+        
+        if(url.indexOf("#") > -1){
+            var tabUrl = url.substring(url.indexOf("#"));
+
+            if(tabUrl.indexOf("-") > -1 && tabUrl.indexOf("#consultations-") > -1){
+                var consultationKey = tabUrl.substring(tabUrl.indexOf("-") + 1);
+                window.location.href = window.location.href.substring(0, window.location.href.lastIndexOf("-"));
+
+                $('a[href="#consultations"').tab('show');
+                $( '.panel-collapse' ).removeClass( 'in' );
+                $( '.panel-body' ).removeClass( 'active' );
+                $('a[class="accordion-toggle"]').addClass('collapsed');
+                $('.collapsed').attr('aria-expanded', false);
+                $( '.panel-collapse' ).attr('aria-expanded', false);
+
+                $(url.substring(url.indexOf("#")) ).addClass('active');
+                $('#collapse-consultations').addClass('in');
+                $('#collapse-consultations').css("height", "auto");
+                $('#collapse-consultations').attr('aria-expanded', true);
+                $('a[href="#collapse-consultations"]').removeClass('collapsed');
+                $('a[href="#collapse-consultations"]').attr('aria-expanded', true);
+
+                $.ajax({
+                    type: "GET",
+                    url: "/clinic_consultation_list/{{patient.id}}",
+                }).done(updateCCListRows);
+
+                edit_CC(consultationKey);
+
+            }
+            else{
+                $('a[href="' + url.substring(url.indexOf("#")) + '"').tab('show');
+                $( '.panel-collapse' ).removeClass( 'in' );
+                $( '.panel-body' ).removeClass( 'active' );
+                $('a[class="accordion-toggle"]').addClass('collapsed');
+                $('.collapsed').attr('aria-expanded', false);
+                $( '.panel-collapse' ).attr('aria-expanded', false);
+
+                $(url.substring(url.indexOf("#")) ).addClass('active');
+                $('#collapse-' + url.substring(url.indexOf("#") + 1)).addClass('in');
+                $('#collapse-' + url.substring(url.indexOf("#") + 1)).css("height", "auto");
+                $('#collapse-' + url.substring(url.indexOf("#") + 1)).attr('aria-expanded', true);
+                $('a[href="' + '#collapse-' + url.substring(url.indexOf("#") + 1) + '"]').removeClass('collapsed');
+                $('a[href="' + '#collapse-' + url.substring(url.indexOf("#") + 1) + '"]').attr('aria-expanded', true);
+
+                if($('#ip-treatments').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/ipt_list/{{patient.id}}",
+                    }).done(updateIPTListRows);
+                }
+
+                else if($('#op-treatments').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/opt_list/{{patient.id}}",
+                    }).done(updateOPTListRows);
+                }
+
+                else if($('#laboratories').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/lab_results_list/{{patient.id}}",
+                    }).done(updateLabListRows);
+                }
+
+                else if($('#consultations').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/clinic_consultation_list/{{patient.id}}",
+                    }).done(updateCCListRows);
+                }
+
+                else if($('#medication').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/patient_medication_list/{{patient.id}}",
+                    }).done(updateMedicationListRows);
+                }
+
+                else if($('#diagnoses').hasClass('active')){
+                    $.ajax({
+                        type: "GET",
+                        url: "/patient_diagnoses_list/{{patient.id}}",
+                    }).done(updateDiagnosesListRows);
+                }
+
+                $('#list-cc-view-link').hide();
+                $('#add-cc-view').hide();
+                $('#edit-cc-view').hide();
+            }
+            
+        }
+        else{
+            $( '#myTab li' ).first().addClass('active');
+            $( '.panel-collapse' ).removeClass( 'in' );
+            $( '.panel-body' ).removeClass( 'active' );
+            $('a[class="accordion-toggle"]').addClass('collapsed');
+            $('.collapsed').attr('aria-expanded', false);
+            $( '.panel-collapse' ).attr('aria-expanded', false);
+
+            $('#patient-info').addClass('active');
+            $('#collapse-patient-info').addClass('in');
+            $('#collapse-patient-info').css("height", "auto");
+            $('#collapse-patient-info').attr('aria-expanded', true);
+            $('a[href="#collapse-patient-info"]').removeClass('collapsed');
+            $('a[href="#collapse-patient-info"]').attr('aria-expanded', true);
+
+            $('#list-cc-view-link').hide();
+            $('#add-cc-view').hide();
+            $('#edit-cc-view').hide();
+        }  
+
+        $("#confinement-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#discharge-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edit-confinement-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edit-discharge-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#membership-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+        
+        $("#bday").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#expiration-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#opt-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edit-opt-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#med-procedure-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edited-med-procedure-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edited-med-procedure-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#cc-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+        $("#edit-cc-date").dateDropdowns({
+            displayFormat: "mdy"
+        });
+
+
+        
+        $('#list-ipt-view-link').hide();
+        $('#add-ipt-view').hide();
+        $('#edit-ipt-view').hide();
+
+
+        $('#list-opt-view-link').hide();
+        $('#add-opt-view').hide();
+        $('#edit-opt-view').hide();
+
+
+        $('#list-lab-view-link').hide();
+        $('#add-lab-view').hide();
+        $('#edit-lab-view').hide();
+
+
+        $(".date-div select").addClass("form-control");
+        $("#birthday select").prop("required", true);
+        $("#confinement-date-div select").prop("required", true);
+        $("#opt-date-div select").prop("required", true);
+        $("#cc-date-div select").prop("required", true);
+        $("select option[value='']:selected").attr('disabled',"disabled");
+        
+        $("#birthday select[name='date_[month]']").attr('name', 'bday_month');
+        $("#birthday select[name='date_[day]']").attr('name', 'bday_day');
+        $("#birthday select[name='date_[year]']").attr('name', 'bday_year');
+
+        $("#mem-date select[name='date_[month]']").attr('name', 'mem_date_month');
+        $("#mem-date select[name='date_[day]']").attr('name', 'mem_date_day');
+        $("#mem-date select[name='date_[year]']").attr('name', 'mem_date_year');
+
+        $("#exp-date select[name='date_[month]']").attr('name', 'exp_date_month');
+        $("#exp-date select[name='date_[day]']").attr('name', 'exp_date_day');
+        $("#exp-date select[name='date_[year]']").attr('name', 'exp_date_year');
+        
+        $('input[type=radio][name=referral]').change(function() {
+            if (this.value == 'walk-in') {
+                $('#referrer').slideUp(200);
+                $('#referrer').prop('required', false);
+                $('#referrer').val('');
+            }
+            else if (this.value == 'referred') {
+                $('#referrer').slideDown(200);
+                $('#referrer').prop('required', true);
+                $('#referrer').focus();
+            }
+        });
+
+                var date = "{{patient.birthdate}}".split("-");
+                $("#birthday select[name='bday_month']").val(date[1]);
+                $("#birthday select[name='bday_day']").val(date[2]);
+                $("#birthday select[name='bday_year']").val(date[0]);
+
+
+                if("{{patient.membership}}" !== "") {
+                    date = "{{patient.membership}}".split("-");
+                   $("#mem-date select[name='mem_date_month']").val(date[1]);
+                    $("#mem-date select[name='mem_date_day']").val(date[2]);
+                    $("#mem-date select[name='mem_date_year']").val(date[0]);
+                }
+                
+
+                if("{{patient.expiration}}" !== "") {
+                    date = "{{patient.expiration}}".split("-");
+                    $("#exp-date select[name='exp_date_month']").val(date[1]);
+                    $("#exp-date select[name='exp_date_day']").val(date[2]);
+                    $("#exp-date select[name='exp_date_year']").val(date[0]);
+                }
+
+                if("{{patient.referred_by}}" !== "") {
+                    $("input[name=referral][value=referred]").attr('checked', 'checked');
+                    $('#referrer').slideDown(200);
+                    $('#referrer').prop('required', true);
+                    $('#referrer').val("{{patient.referred_by}}");
+                } else{
+                    $("input[name=referral][value=walk-in]").attr('checked', 'checked');
+                }
+
+                if("{{patient.sex}}" === "Male"){
+                    $('#sex option[value="Male"]').attr('selected', true);
+                } else if("{{patient.sex}}" === "Female"){
+                    $('#sex option[value="Female"]').attr('selected', true);
+                } else{
+                    $('#sex option[value="Others"]').attr('selected', true)
+                }
+
+                if("{{patient.civil_status}}" === "Single"){
+                    $('#civil_status option[value="Single"]').attr('selected', true);
+                } else if("{{patient.civil_status}}" === "Married"){
+                    $('#civil_status option[value="Married"]').attr('selected', true);
+                } else if("{{patient.civil_status}}" === "Divorced"){
+                    $('#civil_status option[value="Divorced"]').attr('selected', true)
+                } else if("{{patient.civil_status}}" === "Separated"){
+                    $('#civil_status option[value="Separated"]').attr('selected', true);
+                } else if("{{patient.civil_status}}" === "Widowed"){
+                    $('#civil_status option[value="Widowed"]').attr('selected', true)
+                }
+
+        
+        $("#email").blur(function() {
+            if($("#email").val().trim() !== "") {
+                var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                if (!re.test($("#email").val().trim())) {
+                    $('#error-email').text("Invalid Email");
+                    $('#save-btn').prop('disabled', true);
+                } else {
+                    $('#error-email').text("");
+                    $('#save-btn').prop('disabled', false);
+                }
+            }
+        });
+
+        IPT_List_Table = $('#ipt-list').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true }
+            ]    
+        });
+
+        OPT_List_Table = $('#opt-list').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true }
+            ]    
+        });
+
+        Lab_List_Table = $('#list-lab-result').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true }
+            ]    
+        });
+
+        CC_List_Table = $('#cc-list').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                {% if doctor %}
+                { "bSortable": true }
+                {% endif %}
+            ]    
+        });
+
+        Medication_List_Table = $('#patient-medication-list').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true }
+            ]    
+        });
+
+        Diagnoses_List_Table = $('#patient-diagnoses-list').DataTable({
+            "bSort": true, 
+            "aaSorting": [],
+            "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": true }
+            ]    
+        });
+    });
+
+
+    // FOR ACCORDION; ONCLICK LISTENER FOR IPT DIV//
+    $('#collapse-ip-treatments').parent().children('div.panel-heading').on('click', function(){
+
+        if($('#collapse-ip-treatments').hasClass('in') == false){
+            $.ajax({
+                type: "GET",
+                url: "/ipt_list/{{patient.id}}",
+            }).done(updateIPTListRows);
+        }
+
+    });
+
+    var meds;
+    var med_procedures;
+    var billing;
+
+    function view_CC() {
+        $('#list-cc-view').show();
+        $('#add-cc-view').hide();
+        $('#edit-cc-view').hide();
+        $('#list-cc-view-link').hide();
+    }
+
+    function view_IPT() {
+        $('#list-ipt-view').show();
+        $('#add-ipt-view').hide();
+        $('#edit-ipt-view').hide();
+        $('#list-ipt-view-link').hide();
+    }
+    
+
+    function view_OPT() {
+        $('#list-opt-view').show();
+        $('#add-opt-view').hide();
+        $('#edit-opt-view').hide();
+        $('#list-opt-view-link').hide();
+    }
+
+    function view_lab() {
+        $('#list-lab-view').show();
+        $('#add-lab-view').hide();
+        $('#edit-lab-view').hide();
+        $('#list-lab-view-link').hide();
+    }
+
+    function view_medication() {
+        $('#list-medication-view').show();
+        $('#list-medication-view-link').hide();
+    }
+
+    function view_diagnoses() {
+        $('#list-diagnoses-view').show();
+        $('#list-diagnoses-view-link').hide();
+    }
+    
+    {% if doctor %}
+    $('#add-med-form').submit(function (e) {
+        e.preventDefault();
+        // server SIDE AJAX FOR ADDING A NEW IPT MED ROW TO EDIT IPT VIEW//
+        if(med_modal_caller == 'edit-ipt-add-medication-button') {
+            var cu = $('#edit-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/ipt_edit_add_medication/"+cu,
+                data: {                
+                    'name': $('#add-med-name').val(),
+                    'dosage': $('#add-med-dosage').val(),
+                    'frequency': $('#add-med-frequency').val(),
+                    'type': $('#add-med-type').val(),
+                    'notes': $('#add-med-instructions').val()
+                }
+            }).done(function (data) {
+                 edit_ipt_meds_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>',
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+                showSnackBar('Medication for this IPT Record was successfully added.');
+                $('#add-medication-modal').modal('toggle');
+                $('#add-medication-modal input').val("");
+                $('#add-medication-modal select').val("");
+                $('#add-medication-modal textarea').val("");
+            });
+        }
+        else if(med_modal_caller == 'edit-opt-add-medication-button') {
+            var cu = $('#edit-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/opt_edit_add_medication/"+cu,
+                data: {                
+                    'name': $('#add-med-name').val(),
+                    'dosage': $('#add-med-dosage').val(),
+                    'frequency': $('#add-med-frequency').val(),
+                    'type': $('#add-med-type').val(),
+                    'notes': $('#add-med-instructions').val()
+                }
+            }).done(function (data) {
+                edit_opt_meds_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>',
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+                showSnackBar('Medication for this OPT Record was successfully added.');
+                $('#add-medication-modal').modal('toggle');
+                $('#add-medication-modal input').val("");
+                $('#add-medication-modal select').val("");
+                $('#add-medication-modal textarea').val("");
+            });
+        } 
+        else if(med_modal_caller == 'edit-cc-add-medication-button') {
+            var cu = $('#edit-cc-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/clinic_consultation_edit_add_medication/"+cu,
+                data: {                
+                    'name': $('#add-med-name').val(),
+                    'dosage': $('#add-med-dosage').val(),
+                    'frequency': $('#add-med-frequency').val(),
+                    'type': $('#add-med-type').val(),
+                    'notes': $('#add-med-instructions').val()
+                }
+            }).done(function (data) {
+                edit_cc_meds_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>',
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+                showSnackBar('Medication for this Consultation was successfully added.');
+                $('#add-medication-modal').modal('toggle');
+                $('#add-medication-modal input').val("");
+                $('#add-medication-modal select').val("");
+                $('#add-medication-modal textarea').val("");
+            });
+        }
+        else { //IF ADDING IPT/OPT/CLINIC CONSULTATION ONLY, MEANING NO SERVER SIDE/DATABASE CONNECTION
+            if(med_modal_caller == 'ipt-add-med-button'){
+                add_ipt_meds_table.row.add([
+                    '<input type="checkbox" id="' + ipt_med_id_counter +'" name=""></input>', //idk UNSAON ANG NAME AND ID ANI FOR DELETION
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+
+                $('#add-ipt-select-all-meds').prop('checked', false);
+                ipt_med_id_counter++;
+            }
+            else if(med_modal_caller == 'opt-add-med-button'){
+                add_opt_meds_table.row.add([
+                    '<input type="checkbox" id="' + opt_med_id_counter +'" name=""></input>',
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+
+                $('#add-opt-select-all-meds').prop('checked', false);
+                opt_med_id_counter++;
+            }
+            else if(med_modal_caller == 'cc-add-med-button'){
+                add_cc_meds_table.row.add([
+                    '<input type="checkbox" id="' + cc_med_id_counter +'" name=""></input>',
+                    '<a>' + $('#add-med-name').val() + '</a>',
+                    $('#add-med-dosage').val(),
+                    $('#add-med-frequency').val(),
+                    $('#add-med-type').val(),
+                    $('#add-med-instructions').val()
+                ]).draw();
+
+                $('#add-cc-select-all-meds').prop('checked', false);
+                cc_med_id_counter++;
+            }
+
+             $('#add-medication-modal').modal('toggle');
+             $('#add-medication-modal input').val("");
+             $('#add-medication-modal select').val("");
+             $('#add-medication-modal textarea').val("");
+        }
+    });
+
+    $('#add-med-procedure-form').submit(function (e) {
+        e.preventDefault();
+        if(med_procedure_modal_caller == 'edit-ipt-add-med-procedure-button') {
+            var cu = $('#edit-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/ipt_edit_add_medical_procedure/"+cu,
+                data: {                
+                    'date': $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                            $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                            $("#add-med-procedure-date select[name='date_[day]']").val(),
+                    'description': $('#add-med-procedure-description').val(),
+                    'details': $('#add-med-procedure-details').val(),
+                }
+            }).done(function (data) {
+               edit_ipt_med_procedures_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>',
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+                showSnackBar('Medical Procedure for this IPT Record was successfully added.');
+                $('#add-med-procedure-modal').modal('toggle');
+                $('#add-med-procedure-modal input').val("");
+                $('#add-med-procedure-modal select').val("");
+                $('#add-med-procedure-modal textarea').val("");
+            });
+        }
+
+        else if(med_procedure_modal_caller == 'edit-opt-add-med-procedure-button') {
+            var cu = $('#edit-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/opt_edit_add_medical_procedure/"+cu,
+                data: {                
+                    'date': $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                            $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                            $("#add-med-procedure-date select[name='date_[day]']").val(),
+                    'description': $('#add-med-procedure-description').val(),
+                    'details': $('#add-med-procedure-details').val(),
+                }
+            }).done(function (data) {
+                edit_opt_med_procedures_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>',
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+                showSnackBar('Medical Procedure for this OPT Record was successfully added.');
+                $('#add-med-procedure-modal').modal('toggle');
+                $('#add-med-procedure-modal input').val("");
+                $('#add-med-procedure-modal select').val("");
+                $('#add-med-procedure-modal textarea').val("");
+            });
+        }
+
+        else if(med_procedure_modal_caller == 'edit-cc-add-med-procedure-button') {
+            var cu = $('#edit-cc-c-id').val();
+            $.ajax({
+                type: "POST",
+                url: "/clinic_consultation_edit_add_medical_procedure/"+cu,
+                data: {                
+                    'date': $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                            $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                            $("#add-med-procedure-date select[name='date_[day]']").val(),
+                    'description': $('#add-med-procedure-description').val(),
+                    'details': $('#add-med-procedure-details').val(),
+                }
+            }).done(function (data) {
+                edit_cc_med_procedures_table.row.add([
+                    '<input type="checkbox" id="' + data.id + '" name="' + data.id + '"></input>', //idk UNSAON ANG NAME AND ID ANI FOR DELETION
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+                showSnackBar('Medical Procedure for this Consultation was successfully added.');
+                $('#add-med-procedure-modal').modal('toggle');
+                $('#add-med-procedure-modal input').val("");
+                $('#add-med-procedure-modal select').val("");
+                $('#add-med-procedure-modal textarea').val("");
+            });
+        }
+
+        else {
+            if(med_procedure_modal_caller == 'ipt-add-med-procedure-button'){
+                add_ipt_med_procedures_table.row.add([
+                    '<input type="checkbox" id="'+ ipt_med_proc_id_counter +'" name=""></input>',
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+
+                $('#add-ipt-select-all-med-procedures').prop('checked', false);
+                ipt_med_proc_id_counter++;
+            }
+            else if(med_procedure_modal_caller == 'opt-add-med-procedure-button'){
+                add_opt_med_procedures_table.row.add([
+                    '<input type="checkbox" id="'+ opt_med_proc_id_counter +'" name=""></input>',
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+
+                $('#add-opt-select-all-med-procedures').prop('checked', false);
+                opt_med_proc_id_counter++;
+            }
+            else if(med_procedure_modal_caller == 'cc-add-med-procedure-button'){
+                add_cc_med_procedures_table.row.add([
+                    '<input type="checkbox" id="'+ cc_med_proc_id_counter +'" name=""></input>',
+                    '<a>' + $("#add-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#add-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#add-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#add-med-procedure-description').val(),
+                    $('#add-med-procedure-details').val()
+                ]).draw();
+
+                $('#add-cc-select-all-med-procedures').prop('checked', false);
+                cc_med_proc_id_counter++;
+            }
+            
+
+            $('#add-med-procedure-modal').modal('toggle');
+            $('#add-med-procedure-modal input').val("");
+            $('#add-med-procedure-modal select').val("");
+            $('#add-med-procedure-modal textarea').val("");
+        }
+    });
+
+    $('#edit-med-form').submit(function (e) {
+        e.preventDefault();
+        var med_name = $('#edit-med-name').val();
+        if(edit_med_id != undefined && edit_med_id != null) {
+            if(edit_med_caller_type == "IPT"){
+                edit_ipt_meds_table.row(edit_med_caller).data([
+                    '<input type="checkbox" id="' + edit_med_id + '" name="' + edit_med_id + '"></input>',
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else if(edit_med_caller_type == "OPT"){
+                edit_opt_meds_table.row(edit_med_caller).data([
+                    '<input type="checkbox" id="' + edit_med_id + '" name="' + edit_med_id + '"></input>',
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else if(edit_med_caller_type == "CC"){
+                edit_cc_meds_table.row(edit_med_caller).data([
+                    '<input type="checkbox" id="' + edit_med_id + '" name="' + edit_med_id + '"></input>',
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else{
+                meds.row(edit_med_caller).data([
+                    '<input type="checkbox" id="' + edit_med_id + '" name="' + edit_med_id + '"></input>',
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/edit_medication/"+edit_med_id,
+                data: {                
+                    'name': $('#edit-med-name').val(),
+                    'dosage': $('#edit-med-dosage').val(),
+                    'frequency': $('#edit-med-frequency').val(),
+                    'type': $('#edit-med-type').val(),
+                    'notes': $('#edit-med-instructions').val()
+                }
+            }).done(function (data) {
+                if(data.id) {
+                    showSnackBar('Medication "' + med_name + '" was successfully updated.');
+                }
+                edit_med_caller_type = null;
+            });
+        }
+        else{//ADD IPT/OPT/CC
+            if(edit_med_caller_type == "IPT"){
+                add_ipt_meds_table.row(edit_med_caller).data([
+                    edit_med_caller.children('td:first').html(),
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else if(edit_med_caller_type == "OPT"){
+                add_opt_meds_table.row(edit_med_caller).data([
+                    edit_med_caller.children('td:first').html(),
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else if(edit_med_caller_type == "CC"){
+                add_cc_meds_table.row(edit_med_caller).data([
+                    edit_med_caller.children('td:first').html(),
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+            else{
+                meds.row(edit_med_caller).data([
+                    edit_med_caller.children('td:first').html(), //idk UNSAON ANG NAME AND ID ANI FOR DELETION
+                    '<a>' + $('#edit-med-name').val() + '</a>',
+                    $('#edit-med-dosage').val(),
+                    $('#edit-med-frequency').val(),
+                    $('#edit-med-type').val(),
+                    $('#edit-med-instructions').val()
+                ]).draw();
+            }
+        }
+
+        edit_med_caller_type = null;
+        $('#edit-medication-modal').modal('toggle');
+        $('#edit-medication-modal input').val("");
+        $('#edit-medication-modal select').val("");
+        $('#edit-medication-modal textarea').val("");
+    });
+
+    $('#edit-med-procedure-form').submit(function (e) {
+        e.preventDefault();
+        var med_procedure_name = $('#edit-med-procedure-description').val(); 
+        if(edit_med_procedure_id != undefined && edit_med_procedure_id != null) {
+            if(edit_med_procedure_caller_type == "IPT"){
+                edit_ipt_med_procedures_table.row(edit_med_procedure_caller).data([
+                    '<input type="checkbox" id="' + edit_med_procedure_id + '" name="' + edit_med_procedure_id + '"></input>',
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else if(edit_med_procedure_caller_type == "OPT"){
+                edit_opt_med_procedures_table.row(edit_med_procedure_caller).data([
+                    '<input type="checkbox" id="' + edit_med_procedure_id + '" name="' + edit_med_procedure_id + '"></input>',
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else if(edit_med_procedure_caller_type == "CC"){
+                edit_cc_med_procedures_table.row(edit_med_procedure_caller).data([
+                    '<input type="checkbox" id="' + edit_med_procedure_id + '" name="' + edit_med_procedure_id + '"></input>',
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else{
+                med_procedures.row(edit_med_procedure_caller).data([
+                    '<input type="checkbox" id="' + edit_med_procedure_id + '" name="' + edit_med_procedure_id + '"></input>',
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            
+
+            $.ajax({
+                type: "POST",
+                url: "/edit_medical_procedure/"+edit_med_procedure_id,
+                data: {                
+                    'date': $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                            $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                            $("#edit-med-procedure-date select[name='date_[day]']").val(),
+                    'description': $('#edit-med-procedure-description').val(),
+                    'details': $('#edit-med-procedure-details').val(),
+                }
+            }).done(function (data) {
+                if(data.id) {
+                    showSnackBar('Medical Procedure "' + med_procedure_name + '" was successfully updated.');
+                }
+            });
+        }
+        else{//ADD IPT/OPT/CC
+            if(edit_med_procedure_caller_type == "IPT"){
+                add_ipt_med_procedures_table.row(edit_med_procedure_caller).data([
+                    edit_med_procedure_caller.children('td:first').html(),
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else if(edit_med_procedure_caller_type == "OPT"){
+                add_opt_med_procedures_table.row(edit_med_procedure_caller).data([
+                    edit_med_procedure_caller.children('td:first').html(),
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else if(edit_med_procedure_caller_type == "CC"){
+                add_cc_med_procedures_table.row(edit_med_procedure_caller).data([
+                    edit_med_procedure_caller.children('td:first').html(),
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+            else{
+                med_procedures.row(edit_med_procedure_caller).data([
+                    edit_med_procedure_caller.children('td:first').html(), //idk UNSAON ANG NAME AND ID ANI FOR DELETION
+                    '<a>' + $("#edit-med-procedure-date select[name='date_[year]']").val() + '-' + 
+                    $("#edit-med-procedure-date select[name='date_[month]']").val() + '-' +
+                    $("#edit-med-procedure-date select[name='date_[day]']").val() + '</a>',
+                    $('#edit-med-procedure-description').val(),
+                    $('#edit-med-procedure-details').val()
+                ]).draw();
+            }
+
+        }
+
+
+        edit_med_procedure_caller_type = null;
+        $('#edit-med-procedure-modal').modal('toggle');
+        $('#edit-med-procedure-modal input').val("");
+        $('#edit-med-procedure-modal select').val("");
+        $('#edit-med-procedure-modal textarea').val("");
+    });
+    {% endif %}
+
+    (function ($) {
+      $.each(['show', 'hide'], function (i, ev) {
+        var el = $.fn[ev];
+        $.fn[ev] = function () {
+          this.trigger(ev);
+          return el.apply(this, arguments);
+        };
+      });
+    })(jQuery);
+
+    ///////// UPDATE LIST IPT ROWS
+    $("#list-ipt-view").on('show', function() {
+        $.ajax({
+            type: "GET",
+            url: "/ipt_list/{{patient.id}}",
+        }).done(updateIPTListRows);
+    });
+
+    $("#list-opt-view").on('show', function() {
+        $.ajax({
+            type: "GET",
+            url: "/opt_list/{{patient.id}}",
+        }).done(updateOPTListRows);
+    });
+
+
+    $("#list-lab-view").on('show', function() {
+        $.ajax({
+            type: "GET",
+            url: "/lab_results_list/{{patient.id}}",
+        }).done(updateLabListRows);
+    });
+
+
+    $("#list-cc-view").on('show', function() {
+        // alert("BESH");
+        $.ajax({
+            type: "GET",
+            url: "/clinic_consultation_list/{{patient.id}}",
+        }).done(updateCCListRows);
+    });
+    // var temp_hehe = 1;
+    $("#list-medication-view").on('show', function() {
+        // alert("BESH");
+        $.ajax({
+            type: "GET",
+            url: "/patient_medication_list/{{patient.id}}",
+        }).done(updateMedicationListRows);
+    });
+
+    $("#list-diagnoses-view").on('show', function() {
+        $.ajax({
+            type: "GET",
+            url: "/patient_diagnoses_list/{{patient.id}}",
+        }).done(updateDiagnosesListRows);
+    });
+
+    function updateIPTListRows (data) {
+        console.log("WHY HEsRE BESHIE")
+        IPT_List_Table = IPT_List_Table.rows().remove().draw();
+        for (var i = data.ipt_list.length - 1; i >= 0; i--) {
+            IPT_List_Table.row.add([
+                '<a onclick="edit_IPT('+ data.ipt_list[i].id +')" value="' + data.ipt_list[i].id + '" id="ipt-data'+data.ipt_list[i].id+'">' + data.ipt_list[i].conf_date + '</a>',
+                data.ipt_list[i].discharge_date,
+                data.ipt_list[i]['parent_record.hospitalName'],
+                data.ipt_list[i]['parent_record.doctor.username.first_name'] + " " + data.ipt_list[i]['parent_record.doctor.username.middle_name'] + " " + data.ipt_list[i]['parent_record.doctor.username.last_name']
+            ]).draw();
+        };
+    } 
+    // end of LIST IPT ROWS
+
+    //////// UPDATE LIST OPT ROWS
+
+    function updateOPTListRows (data) {
+        console.log("UPDATE OPT LIST ROWS");
+        console.log(data);
+        OPT_List_Table = OPT_List_Table.rows().remove().draw();
+        for (var i = data.opt_list.length - 1; i >= 0; i--) {
+            OPT_List_Table.row.add([
+                '<a onclick="edit_OPT('+ data.opt_list[i].id +')" value="' + data.opt_list[i].id + '" id="opt-data-'+data.opt_list[i].id+'">' + data.opt_list[i].date + '</a>',
+                data.opt_list[i]['parent_record.hospitalName'],
+                data.opt_list[i]['parent_record.doctor.username.first_name'] + " " + data.opt_list[i]['parent_record.doctor.username.middle_name'] + " " + data.opt_list[i]['parent_record.doctor.username.last_name']
+            ]).draw();
+        };
+    }
+    // end of LIST OPT ROWS
+
+    function updateLabListRows (data) {
+        Lab_List_Table = Lab_List_Table.rows().remove().draw();
+        for (var i = data.lab_results_list.length - 1; i >= 0; i--) {
+            Lab_List_Table.row.add([
+                '<a onclick="edit_Lab(\'lab-data-' + data.lab_results_list[i].id + '\')" value="' + data.lab_results_list[i].id + '" id="lab-data-' + data.lab_results_list[i].id + '">' + data.lab_results_list[i].date + '</a>',
+                data.lab_results_list[i].hospitalName,
+                data.lab_results_list[i].description,
+                data.lab_results_list[i].notes
+            ]).draw();
+        };
+    }
+
+    function updateCCListRows (data) {
+        CC_List_Table = CC_List_Table.rows().remove().draw();
+        for (var i = data.cc_list.length - 1; i >= 0; i--) {
+            CC_List_Table.row.add([
+                '<a onclick="edit_CC(' + data.cc_list[i].id + ')" value="' + data.cc_list[i].id + '" id="cc-data-' + data.cc_list[i].id + '">' + data.cc_list[i].date + '</a>',
+                data.cc_list[i]['parent_record.hospitalName'],
+                data.cc_list[i]['parent_record.doctor.username.first_name'] + " " + data.cc_list[i]['parent_record.doctor.username.middle_name'] + " " + data.cc_list[i]['parent_record.doctor.username.last_name'],
+                {% if doctor %}
+                data.cc_list[i].sum_of_diag
+                {% endif %}
+            ]).draw();
+        };
+    }
+
+    function updateMedicationListRows (data) {
+        Medication_List_Table = Medication_List_Table.rows().remove().draw();
+        console.log("IN HERE MEDICATION LIST ROWS");
+        console.log("what the fuck", data.meds);
+        for (var i = data.meds.length - 1; i >= 0; i--) {
+            var checkup_date;
+            var checkup_type = data.meds[i]['parent_record.check_up_type'];
+
+            if(data.meds[i].date == undefined){
+                checkup_date = data.meds[i].conf_date;   
+            }
+            else{
+               checkup_date = data.meds[i].date;
+            }
+
+            Medication_List_Table.row.add([
+                "<a onclick='edit_check_up(\"" + checkup_type + "\"," + data.meds[i]['id'] + ")'>" + checkup_date + "</a>",
+                data.meds[i]['parent_record.medication.name'],
+                data.meds[i]['parent_record.check_up_type'],
+                "{{user.first_name}} {{user.middle_name}} {{user.last_name}}"
+            ]).draw();
+           
+            
+        };
+    }
+
+    function updateDiagnosesListRows (data) {
+        Diagnoses_List_Table = Diagnoses_List_Table.rows().remove().draw();
+        for (var i = data.diagnoses.length - 1; i >= 0; i--) {
+            var checkup_date;
+            var checkup_type = data.diagnoses[i]['parent_record.check_up_type'];
+
+            if(data.diagnoses[i].date == undefined){
+                checkup_date = data.diagnoses[i].conf_date;   
+            }
+            else{
+               checkup_date = data.diagnoses[i].date;
+            }
+
+            Diagnoses_List_Table.row.add([
+                "<a onclick='edit_check_up(\"" + checkup_type + "\"," + data.diagnoses[i]['id'] + ")'>" + checkup_date + "</a>",
+                data.diagnoses[i]['parent_record.check_up_type'],
+                data.diagnoses[i]['parent_record.hospitalName'],
+                "{{user.first_name}} {{user.middle_name}} {{user.last_name}}",
+                data.diagnoses[i].sum_of_diag,
+            ]).draw();
+        };
+    }
+
+    function edit_check_up(type, key) {
+        if(type == 'Consultation'){
+            window.location.href = window.location.href.substring(0, window.location.href.indexOf("#medication")) + '#consultations'
+            edit_CC(key);
+        }
+        else if(type == 'In-Patient-Treatment'){
+            window.location.href = window.location.href.substring(0, window.location.href.indexOf("#medication")) + '#ip-treatments'
+            edit_IPT(key);
+        }
+        else{
+            window.location.href = window.location.href.substring(0, window.location.href.indexOf("#medication")) + '#op-treatments'
+            edit_OPT(key);
+        }
+    }
+
+    $("#tab-consultations").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/clinic_consultation_list/{{patient.id}}",
+        }).done(updateCCListRows);
+    });
+
+    $("#tab-inpatient").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/ipt_list/{{patient.id}}",
+        }).done(updateIPTListRows);
+    });
+
+    $("#tab-outpatient").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/opt_list/{{patient.id}}",
+        }).done(updateOPTListRows);
+    });
+
+    $("#tab-labs").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/lab_results_list/{{patient.id}}",
+        }).done(updateLabListRows);
+    });
+
+    $("#tab-diagnoses").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/patient_diagnoses_list/{{patient.id}}",
+        }).done(updateDiagnosesListRows);
+    });
+
+    $("#tab-medications").click(function (e) {
+        $.ajax({
+            type: "GET",
+            url: "/patient_medication_list/{{patient.id}}",
+        }).done(updateMedicationListRows);
+    });
+
+    $("#tab-billing").click(function (e) {
+
+    });
+
+    var med_modal_caller;
+    var med_procedure_modal_caller;
+    var edit_med_modal_caller;
+    var edit_med_procedure_modal_caller;
+
+    $('#add-medication-modal').on('shown.bs.modal', function (e) {
+        med_modal_caller = $(e.relatedTarget).attr('id');
+    });
+
+    $('#add-med-procedure-modal').on('shown.bs.modal', function (e) {
+        med_procedure_modal_caller = $(e.relatedTarget).attr('id');
+    });
+
+    $('#edit-medication-modal').on('shown.bs.modal', function (e) {
+        // edit_med_modal_caller = $(e.relatedTarget).children('input').attr('id');
+        // console.log(edit_med_id);
+    });
+
+    $('#edit-med-procedure-modal').on('shown.bs.modal', function (e) {
+        // edit_med_procedure_modal_caller = $(e.relatedTarget).children('input').attr('id');
+        // alert(edit_med_procedure_id);
+    });
+
+    function showSnackBar(str) {
+        var x = document.getElementById("snackbar");
+        x.innerHTML = str;
+        x.className = "show";
+        setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+    }
+
+</script>
+</html>

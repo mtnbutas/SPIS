@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Hospital/Clinic/Laboratory List</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/styles.css">
+	<link rel="stylesheet" 	type="text/css"			href="../../static/css/font-awesome.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+	<script 				type="text/javascript" 	src="../../static/js/jquery.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/bootstrap.min.js"></script>
+	<script 				type="text/javascript"	src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<script 				type="text/javascript"  src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+
+</head>
+<body>
+	<!-- NAVIGATION -->
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>                        
+	      </button>
+	      <a class="navbar-brand" href="/">SPIS LOGO HERE</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="navbar">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="/">Home</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	        <li><a href="#">{{session.user.id}}</a></li>
+	        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+	<!-- END OF NAVIGATION -->
+
+	<div class="container-fluid main-container">
+		<!-- BREADCRUMBS -->
+		<ol class="breadcrumb">
+			<li><a href="/">Home</a></li>
+			<li class="active">Hospital List</li>
+		</ol>
+		<!-- END OF BREADCRUMBS -->
+		<center><h3>Hospital/Clinic/Laboratory List</h3></center><hr>
+
+		<div class="container-fluid">
+			<div class="row feature-row" style="padding-top: 20px">
+				<div class="col-sm-10 col-sm-offset-1">
+					<form method="POST" action="/hcl_list">
+						<div class="table-responsive">
+							<table id="list-hospital" class="table table-striped table-bordered" cellspacing="0" width="100%">
+						        <thead>
+						            <tr>
+						                <!-- <th><input type="checkbox" aria-label="..." id="select-all"/></th> -->
+						                <th>Name</th>
+						                <th>Address</th>
+						                <th>
+						                	<select id="type-filter" required>
+					                          	<option value="all">Type</option>
+					                          	<option value="hospital">Hospital</option>
+					                          	<option value="clinic">Clinic</option>
+					                          	<option value="laboratory">Laboratory</option>
+					                          	<option value="others">Others</option>
+				                        	</select>
+						                </th>
+						                <th>Contact Numbers</th>
+						                <th>
+						                	<select id="type-filter" required>
+					                          	<option value="all">Status</option>
+					                          	<option value="active">Active</option>
+					                          	<option value="deactivated">Deactivated</option>
+				                        	</select>
+						                </th>
+						            </tr>
+						        </thead>
+						        <tbody>
+
+					        		{% for hcl in hcls %}
+					        			<tr>
+					        				<!-- <td><input type="checkbox" aria-label="..." id="" name="{{ hcl.name }}" value="{{ hcl.name }}"/></td> -->
+					        				<td> 
+					        				<a href data-toggle="modal" class="edit-toggle" data-target="#edit-hospital" id="{{ hcl.name }}"> {{ hcl.name }}</a> </td>
+					        				<td>{{ hcl.address }} </td>
+					        				<td>{{ hcl.type }} </td>
+					        				<td>
+					        					{% for a in range(0, hcl.contact_num.length) -%}
+					        						{{ hcl.contact_num[a] }}
+					        						{% if (a < hcl.contact_num.length-1) %}
+					        							/
+					        						{% endif %}
+					        					{% endfor %}
+					        				</td>
+					        				<td>{% if hcl.active == true %}
+					        						Active
+					        					{% else %}
+					        						Deactivated
+					        					{% endif %}
+					        				</td>
+					        			</tr>
+					        		{% endfor %}
+								</tbody>
+						    </table>
+						</div>
+						<div class="button-group">
+							<!-- <button class="btn btn-red pull-right" type="submit" name="delete" value="true" id="delete">Delete</button> -->
+							{% if admin %}
+	                        	<a href class="btn btn-lime pull-right" id="add-hlc-button" data-toggle="modal" data-target="#add-hospital">Add</a>
+	                        {% endif %}
+	                    </div>
+					</form>
+		        </div>
+		    </div>
+		</div>
+
+
+		<!-- ADD HOSPITAL MODAL -->
+		<div class="modal fade" id="add-hospital" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		     	<div class="modal-content">
+			        <div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+			        	<h4 class="modal-title" style="float:left"><strong>Add Hospital/Clinic/Laboratory</strong></h4>
+			        </div>
+		       		<div class="modal-body">
+		       			<div class="container-fluid">
+		       				<div class="row">
+		       					<div class="col-xs-12">
+		       						<form id="add-form" class="form-horizontal" method="POST" action="/hcl_add">
+		       							<fieldset>
+		       								<div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="name">Name*</label>
+			                                    <div class="col-sm-9">
+			                                        <input type="text" class="form-control" name="name" id="name" required>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                	<label class="col-sm-3 control-label text-muted" for="status">Status*</label>
+			                                    <div class="col-sm-9">
+			                                        <label class="radio-inline"><input type="radio" name="status" id="status-active" checked disabled>Active</label>
+													<label class="radio-inline"><input type="radio" name="status" id="status-deactived" disabled>Deactivated</label>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="address">Address</label>
+			                                    <div class="col-sm-9">
+			                                        <input type="text" class="form-control" name="address" id="address">
+			                                    </div>
+			                                </div>
+			                                <input type="hidden" name="count" id="count" value="1" />
+									        <div class="form-group control-group" id="fields">
+									            <label class="control-label col-sm-3" for="field1">Contact #(s)</label>
+									            <div class="controls col-sm-9" id="contacts"> 
+									                <div class="input-append" id="contact-list">
+									                    <div id="field"><input autocomplete="off" class="form-control dynamic-field" id="field1" name="field1" type="text" placeholder="contact number" data-items="8"/><button id="b1" class="btn btn-success add-more" type="button" title="add another contact">+</button></div>
+									                </div>
+									            </div>
+									        </div>
+		                                	<div class="form-group">
+			                                    <label class="col-sm-3 control-label">Type*</label>
+			                                    <div class="col-sm-9">
+			                                        <select class="form-control" id="type" name="type" required>
+			                                          <option value="">----</option>
+			                                          <option value="Clinic">Clinic</option>
+			                                          <option value="Hospital">Hospital</option>
+			                                          <option value="Laboratory">Laboratory</option>
+			                                          <option value="Others">Others</option>
+			                                        </select>
+			                                    </div>
+			                                </div>
+		       							</fieldset>
+		       							<div class="button-group">
+				                            <a href="" class="btn btn-gray pull-right">Cancel</a>
+				                            <button type="submit" class="btn btn-lime pull-right" id="save-hospital">Save</button>   
+				                        </div>
+		       						</form>
+		       					</div>
+		       				</div>
+		       			</div>
+		       		</div>
+		      	</div>
+		    </div>
+		</div>
+		<!-- end of ADD HOSPITAL MODAL -->
+
+		<!-- VIEW/EDIT HOSPITAL MODAL -->
+		<div class="modal fade" id="edit-hospital" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		     	<div class="modal-content">
+			        <div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+			        	<h4 class="modal-title" style="float:left"><strong>View/Edit Hospital/Clinic/Laboratory</strong></h4>
+			        </div>
+		       		<div class="modal-body">
+		       			<div class="container-fluid">
+		       				<div class="row">
+		       					<div class="col-xs-12">
+		       						<form id="edit-form" class="form-horizontal" method="POST" action="/hcl_edit">
+		       							<fieldset>
+		       								<div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="edit-name">Name*</label>
+			                                    <div class="col-sm-9">
+			                                        <input type="text" class="form-control" name="edit-name" id="edit-name" required>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                	<label class="col-sm-3 control-label" for="edit-status">Status*</label>
+			                                    <div class="col-sm-9">
+			                                        <label class="radio-inline"><input type="radio" name="edit-status" id="edit-status-active" value="Active">Active</label>
+													<label class="radio-inline"><input type="radio" name="edit-status" id="edit-status-deactived" value="Inactive">Inactive</label>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="edit-address">Address</label>
+			                                    <div class="col-sm-9">
+			                                        <input type="text" class="form-control" name="edit-address" id="edit-address">
+			                                    </div>
+			                                </div>
+			                                <input type="hidden" name="key" id="key"/>
+			                                <input type="hidden" name="edit-count" id="edit-count" value="1" />
+									        <div class="form-group control-group" id="edit-fields">
+									            <label class="control-label col-sm-3" for="edit-field">Contact #(s)</label>
+									            <div class="controls col-sm-9" id="edit-contacts"> 
+									                <div class="input-append" id="edit-contact-list">
+									                    <div id="edit-field"><input autocomplete="off" class="form-control dynamic-field" id="edit-field1" name="edit-field1" type="text" placeholder="contact number" data-items="8"/><button id="edit-b1" class="btn btn-success add-more" type="button" title="add another contact">+</button></div>
+									                </div>
+									            </div>
+									        </div>
+		                                	<div class="form-group">
+			                                    <label class="col-sm-3 control-label">Type*</label>
+			                                    <div class="col-sm-9">
+			                                        <select class="form-control" name="edit-type" id="edit-type" required>
+			                                          <option value="">----</option>
+			                                          <option value="Clinic">Clinic</option>
+			                                          <option value="Hospital">Hospital</option>
+			                                          <option value="Laboratory">Laboratory</option>
+			                                          <option value="Others">Others</option>
+			                                        </select>
+			                                    </div>
+			                                </div>
+		       							</fieldset>
+		       							<div class="button-group">
+				                            <a href="" class="btn btn-gray pull-right">Cancel</a>
+				                            <button type="submit" class="btn btn-lime pull-right" id="edit-hlc-button">Save</button>
+				                        </div>
+		       						</form>
+		       					</div>
+		       				</div>
+		       			</div>
+		       		</div>
+		      	</div>
+		    </div>
+		</div>
+		<!-- end of Edit HOSPITAL MODAL -->
+	</div>
+</body>
+<script type="text/javascript">
+	var next = 1;
+	var key;
+	var names = [];
+
+	$('#add-hlc-button').click(function(){
+		next = 1;
+	});
+	$(document).ready(function() {
+	    $('#list-hospital').DataTable({
+	    	"bSort": true, 
+            "aaSorting": [],
+		    "aoColumns": [
+                { "bSortable": true },
+                { "bSortable": false },
+                { "bSortable": false },
+                { "bSortable": false },
+                { "bSortable": false }
+            ]    
+		});
+	});
+	$(document).ready(function(){  
+	    $("#b1").click(function(e){
+	        e.preventDefault();
+	        var addto = "#field" + next;
+	        var addRemove = "#field" + (next);
+	        next = next + 1;
+	        var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="field' + next + '" name="field' + next + '" type="text" placeholder="contact number">';
+	        var newInput = $(newIn);
+	        var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact">-</button></div><div id="field">';
+	        var removeButton = $(removeBtn);
+	        $(addto).after(newInput);
+	        $(addRemove).after(removeButton);
+	        $("#field" + next).attr('data-source',$(addto).attr('data-source'));
+	        $("#count").val(next);  
+	        
+	            $('.remove-me').click(function(e){
+	                e.preventDefault();
+	                var fieldNum = this.id.charAt(this.id.length-1);
+	                var fieldID = "#field" + fieldNum;
+	                $(this).remove();
+	                $(fieldID).remove();
+	            });
+	    }); 
+	    $("#edit-b1").click(function(e){
+	        e.preventDefault();
+	        var addto = "#edit-field" + next;
+	        var addRemove = "#edit-field" + (next);
+	        next = next + 1;
+	        var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="edit-field' + next + '" name="edit-field' + next + '" type="text" placeholder="contact number">';
+	        var newInput = $(newIn);
+	        var removeBtn = '<button id="edit-remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact">-</button></div><div id="edit-field">';
+	        var removeButton = $(removeBtn);
+	        $(addto).after(newInput);
+	        $(addRemove).after(removeButton);
+	        $("#edit-field" + next).attr('data-source',$(addto).attr('data-source'));
+	        $("#edit-count").val(next);  
+	        
+	            $('.remove-me').click(function(e){
+	                e.preventDefault();
+	                var fieldNum = this.id.charAt(this.id.length-1);
+	                var fieldID = "#edit-field" + fieldNum;
+	                $(this).remove();
+	                $(fieldID).remove();
+	            });
+	    }); 
+	});
+	// Add Hospital 
+	// $("#save-hospital").click(function(e){
+	// 	e.preventDefault();
+	// 	var name = $("#name").val();
+	// 	var address = $("#address").val();
+	// 	var type = $("#type").val();
+	// 	var contacts = [];
+	// 	var j = 1;
+
+	// 	while(j <= next){
+	// 		if($("#field" + j).val() != undefined && $("#field" + j).val() != "" ){
+	// 			contacts.push($("#field" + j).val());
+	// 		}
+	// 		j++;
+	// 	}
+	// 	console.log(contacts);
+
+	// 	$.post("/hcl_add", 
+	// 	{
+	// 		name: name,
+	// 		address: address,
+	// 		type: type,
+	// 		cn: contacts,			
+	// 	}).done( function (data) {
+	// 		if(data["status"] == "success"){
+	// 			location.reload();
+	// 		}
+	// 		else{
+	// 			alert(data["name"] + " already exists");
+	// 		}
+	// 	});
+		
+	// });
+
+	// Add data to edit hospital
+	var editModal = $("#edit-hospital");
+	$(".edit-toggle").click(function (){
+		next = 0;
+		key = $(this).attr("id");
+		console.log("this is key: "+key);
+		$("#key").val(key);
+		$.ajax({
+		    type: "GET",
+		    url: "/hcl_edit/" + key,
+		    data: {name: key},
+		}).done(function(data) {
+		    $('#edit-name').val(data["name"]);
+		    $('#edit-address').val(data["address"]);
+		    $('#edit-type').val(data["type"]);
+
+		    if(data["active"] == true){
+		    	$('#edit-status-active').prop('checked', true);
+		    }
+		    else{
+		    	$('#edit-status-deactived').prop('checked', true);
+		    }
+
+		    if(data["contact_numbers"] != null){
+		    	var j = data["contact_numbers"].length;
+
+		    	var contacts = data["contact_numbers"];
+
+		    	for (var x = 0; x < j; x++){ 		
+		    		var addto = "#edit-field" + next;
+			        var addRemove = "#edit-field" + (next);
+			        next = next + 1;
+			        var newIn = '<input autocomplete="off" class="form-control dynamic-field" id="edit-field' + next + '" name="edit-field' + next + '" type="text" placeholder="contact number">';
+			        var newInput = $(newIn);
+			        var removeBtn = '<button id="edit-remove' + (next - 1) + '" class="btn btn-danger remove-me" title="remove contact">-</button></div><div id="edit-field">';
+			        var removeButton = $(removeBtn);
+			        $(addto).after(newInput);
+			        $(addRemove).after(removeButton);
+			        $("#edit-field" + next).attr('data-source',$(addto).attr('data-source'));
+			        $("#edit-count").val(next);  
+			        
+			            $('.remove-me').click(function(e){
+			                e.preventDefault();
+			                var fieldNum = this.id.charAt(this.id.length-1);
+			                var fieldID = "#edit-field" + fieldNum;
+			                $(this).remove();
+			                $(fieldID).remove();
+			            });
+			        $('#edit-field'+next).val(contacts[x]);
+		    	}
+		    }
+
+		    // $("#delete-hcl-form").attr('action', '/hcl_delete_confirmed/'+data['name']);
+
+		});
+
+	});
+
+	// Edit Hospital
+	// $("#edit-hlc-button").click(function(e){
+	// 	e.preventDefault();
+	// 	console.log("editing hospital");
+	// 	var name = $("#edit-name").val();
+	// 	var address = $("#edit-address").val();
+	// 	var type = $("#edit-type").val();
+
+	// 	var active = false;
+	// 	if($('#edit-status-active').is(':checked')){
+	// 		active = true;
+	// 	}
+
+	// 	var contacts = [];
+	// 	var j = 1;
+
+	// 	console.log("NEXT: " +next);
+
+	// 	while(j <= next){
+	// 		if($("#edit-field" + j).val() != undefined && $("#edit-field" + j).val() != "" ){
+	// 			contacts.push($("#edit-field" + j).val());
+	// 		}
+	// 		j++;
+	// 	}
+	// 	console.log(contacts);
+	// 	$.post("/hcl_edit", 
+	// 	{
+	// 		key: key,
+	// 		name: name,
+	// 		address: address,
+	// 		type: type,
+	// 		active: active,
+	// 		cn: contacts,
+	// 	}).done( function (data) {
+	// 		if(data["status"] == "success"){
+	// 			location.reload();
+	// 		}
+	// 		else{
+	// 			alert(data["name"] + " already exists");
+	// 		}
+	// 	});
+	// });
+
+</script>
+</html>

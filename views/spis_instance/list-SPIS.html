@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SPIS Accounts List</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/styles.css">
+	<link rel="stylesheet" 	type="text/css"			href="../../static/css/font-awesome.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
+	<script 				type="text/javascript" 	src="../../static/js/jquery.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/bootstrap.min.js"></script>
+	<script 				type="text/javascript"	src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<script 				type="text/javascript"  src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>
+</head>
+<body>
+	<!-- NAVIGATION -->
+	<nav class="navbar navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>                        
+	      </button>
+	      <a class="navbar-brand" href="#">SPIS LOGO HERE</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="navbar">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="#">Home</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right">
+	        <li><a href="#">{{ user.id }}</a></li>
+	        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	</nav>
+	<!-- END OF NAVIGATION -->
+
+	<div class="container-fluid main-container">
+		<!-- BREADCRUMBS -->
+		<ol class="breadcrumb">
+			<li><a href="#">Home</a></li>
+			<li class="active">Accounts List</li>
+		</ol>
+		<!-- END OF BREADCRUMBS -->
+		<center><h3>SPIS Accounts List</h3></center><hr>
+
+		<div class="container-fluid">
+			<div class="row feature-row" style="padding-top: 20px">
+				<div class="col-sm-10 col-sm-offset-1">
+					<div class="table-responsive">
+						<table id="list-SPIS" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					        <thead>
+					            <tr>
+					                <th><input type="checkbox" aria-label="..." id="select-all"/></th>
+					                <th>SPIS Account</th>
+					                <th>Description</th>
+					                <th>
+					                	<select id="status-filter" style="border: none;">
+				                          	<option value="all">All</option>
+				                          	<option value="active">Active</option>
+				                          	<option value="archived">Deactivated</option>
+			                        	</select>
+			                       	</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					        	{% for single_instance in instances %}
+						            <tr>
+						                <td><input type="checkbox" aria-label="..." id=""/></td>
+						                <td>
+						                <a data-toggle="modal" class="edit-toggle" data-target="#edit-spis" href="/instance_edit/{{ single_instance.license_no }}" id="{{ single_instance.license_no }}">
+						                {{ single_instance.license_no }}
+						                </a>
+						                </td>
+						                <td>{{ single_instance.description }}</td>
+						                <td>{{ single_instance.status }}</td>
+						            </tr>
+					            {% endfor %}
+							</tbody>
+					    </table>
+					</div>
+					<div class="button-group">
+                        <a class="btn btn-lime pull-right" data-toggle="modal" data-target="#add-spis">Add</a>    
+                    </div>
+		        </div>
+		    </div>
+		</div>
+
+
+		<!-- ADD SPIS MODAL -->
+		<div class="modal fade" id="add-spis" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		     	<div class="modal-content">
+			        <div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+			        	<h4 class="modal-title" style="float:left"><strong>Add SPIS Account</strong></h4>
+			        </div>
+		       		<div class="modal-body">
+		       			<div class="container-fluid">
+		       				<div class="row">
+		       					<div class="col-xs-12">
+		       						<form class="form-horizontal" method="POST" action="/instance_add">
+		       							<fieldset>
+			                                <div class="form-group">
+			                                	<label class="col-sm-3 control-label" for="status">Status*</label>
+			                                    <div class="col-sm-9">
+			                                        <label class="radio-inline"><input type="radio" name="status" id="status-active" checked disabled>Active</label>
+													<label class="radio-inline"><input type="radio" name="status" id="status-deactived" disabled>Deactivated</label>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="address">Description</label>
+			                                    <div class="col-sm-9">
+			                                        <textarea class="form-control" name="description" id="description" height="100"></textarea>
+			                                    </div>
+			                                </div>
+		       							</fieldset>
+		       							<div class="button-group">
+				                            <a href="" class="btn btn-gray pull-right">Cancel</a>
+				                            <button type="submit" class="btn btn-lime pull-right" id="save-instance">Save</button>    
+				                        </div>
+		       						</form>
+		       					</div>
+		       				</div>
+		       			</div>
+		       		</div>
+		      	</div>
+		    </div>
+		</div>
+		<!-- end of ADD SPIS MODAL -->
+
+		<!-- EDIT SPIS MODAL -->
+		<div class="modal fade" id="edit-spis" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		     	<div class="modal-content">
+			        <div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+			        	<h4 class="modal-title" style="float:left"><strong>Edit SPIS Account</strong></h4>
+			        </div>
+		       		<div class="modal-body">
+		       			<div class="container-fluid">
+		       				<div class="row">
+		       					<div class="col-xs-12">
+		       						<form class="form-horizontal" method="POST" action="/instance_edit">
+		       							<fieldset>
+			                                <div class="form-group">
+			                                	<label class="col-sm-3 control-label" for="edit-status">Status*</label>
+			                                    <div class="col-sm-9">
+			                                        <label class="radio-inline"><input type="radio" name="edit_status" id="edit_status_active" checked>Active</label>
+													<label class="radio-inline"><input type="radio" name="edit_status" id="edit_status_deactived">Deactivated</label>
+			                                    </div>
+			                                </div>
+			                                <div class="form-group">
+			                                    <label class="col-sm-3 control-label" for="edit-address">Description</label>
+			                                    <div class="col-sm-9">
+			                                        <textarea class="form-control" name="edit_description" id="edit_description" height="100"></textarea>
+			                                    </div>
+			                                </div>
+		       							</fieldset>
+		       							<div class="button-group">
+				                            <a href="" class="btn btn-gray pull-right">Cancel</a>
+				                            <button type="submit" class="btn btn-lime pull-right" id="edit-instance-button">Save</button>    
+				                        </div>
+		       						</form>
+		       					</div>
+		       				</div>
+		       			</div>
+		       		</div>
+		      	</div>
+		    </div>
+		</div>
+		<!-- end of EDIT SPIS MODAL -->
+
+	</div>
+</body>
+<script type="text/javascript">
+	var key;
+	$(document).ready(function() {
+	    $('#list-SPIS').DataTable({
+	    	"bSort": true, 
+            "aaSorting": [[0]],
+		   	"aoColumns": [
+                // { "bSortable": false },
+                { "bSortable": true },
+                { "bSortable": true },
+                { "bSortable": false },
+            ], 
+		});
+	});
+
+	$(".edit-toggle").click(function (){
+		next = 0;
+		key = $(this).attr("id");
+		console.log("key: "+key);
+		$.ajax({
+		    type: "GET",
+		    url: "/spis_edit/" + key,
+		    data: {id: key},
+		}).done(function(data) {
+		    $('#edit_description').val(data["description"]);
+
+		    if(data["status"] == "Active"){
+		    	$('#edit_status_active').prop('checked', true);
+		    }
+		    else{
+		    	$('#edit_status_deactived').prop('checked', true);
+		    }
+		});
+	});
+
+	// Add Instance 
+	$("#save-instance").click(function(e){
+		e.preventDefault();
+		var desc = $("#description").val();
+
+		$.post("/instance_add", 
+		{
+			description: desc		
+		}).done( function (data) {
+			if(data["status"] == "success"){
+				location.reload();
+			}
+			else{
+				alert(data["name"] + " already exists");
+			}
+		});
+		
+	});
+
+	// Edit Instance
+	$("#edit-instance-button").click(function(e){
+		e.preventDefault();
+		var desc = $("#edit_description").val();
+		var status = "Inactive";
+
+		if($('#edit_status_active').is(':checked')){
+			status = "Active";
+		}
+
+		$.post("/instance_edit", 
+		{
+			description: desc,
+			status: status,
+			id: key,
+		}).done( function (data) {
+			if(data["status"] == "success"){
+				location.reload();
+			}
+			else{
+				alert(data["name"] + " already exists");
+			}
+		});
+		
+	});
+</script>
+</html>

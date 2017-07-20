@@ -1,0 +1,282 @@
+<div class="row" id="edit-ipt-view">
+    <div class="form-container col-md-8" style="padding: 20px">
+   <!--      <div class="button-group">
+            
+        </div> -->
+        <form id="edit-ipt-form" class="form-horizontal" role="form" method="POST">
+            <input type="hidden" name="edit-p-id" id="edit-p-id">
+            <input type="hidden" name="edit-c-id" id="edit-c-id">
+
+            <legend><b>Edit In-Patient Treatment</b>
+            <a class="btn btn-blue" style="float: right; margin-top: -10px !important" id="delete-ipt-button">Delete</a></legend>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="edit-confinement-date">Confinement Date*</label>
+                <div class="col-sm-8 date-div" id="edit-confinement-date-div">
+                    <input type="hidden" name="edit-confinement-date" id="edit-confinement-date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="edit-discharge-date">Discharge Date</label>
+                <div class="col-sm-8 date-div" id="edit-discharge-date-div">
+                    <input type="hidden" name="edit-discharge-date" id="edit-discharge-date">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="edit-doctor">Doctor*</label>
+                <div class="col-sm-8">
+                    {% if doctor == null %}
+                    <select class="form-control" id="hidden-edit-doctor" name="edit-doctor" required>
+                      <option value="" disabled>Select Doctor</option>
+                        {% for doctor in doctors %}
+                            <option value="{{doctor.id}}">{{doctor['username.first_name']}} {{doctor['username.middle_name']}} {{doctor['username.last_name']}}</option>
+                        {% endfor %}
+
+                    </select>
+                    {% else %}
+                        <input type="text" class="form-control" name="edit-doctor" id="edit-doctor" value="{{user.first_name}} {{user.middle_name}} {{user.last_name}}" disabled>
+                        <input type="hidden" name="hidden-edit-doctor" id="hidden-edit-doctor" value="{{doctor.id}}">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="edit-hospital">Hospital/Clinic*</label>
+                <div class="col-sm-8">
+
+                    <select class="form-control" id="edit-hospital" name="edit-hospital" required>
+                      <option value="" disabled>Select Hospital/Clinic</option>
+
+                        {% for hospital in hospitals %}
+                            <option name="{{hospital.name}}" value="{{hospital.name}}">{{hospital.name}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+            </div>
+            {% if doctor %}
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="edit-summary">Summary of Diagnosis*</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="edit-summary" id="edit-summary" required>
+                </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="edit-detailed-diagnosis">Detailed Diagnosis*</label>
+              <div class="col-sm-8">
+                  <textarea class="form-control" rows="5" name="edit-detailed-diagnosis" id="edit-detailed-diagnosis"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-4 control-label" for="edit-notes">Notes</label>
+              <div class="col-sm-8">
+                  <textarea class="form-control" rows="5" name="edit-notes" id="edit-notes"></textarea>
+              </div>
+            </div>
+            {% endif %}
+
+            <div class="button-group">
+                <a onclick="view_IPT()" class="btn btn-gray pull-right">Cancel</a>
+                <button type="submit" class="btn btn-lime pull-right" id="edit-btn">Save</button>    
+            </div>
+        </form>
+        {% if doctor %}
+        <!-- MEDICATION LIST FOR IPT -->
+        <form method="POST" action="" id="edit-ipt-med-form">
+            <legend><b>Medications</b></legend>
+            <div class="table-responsive">
+                <table id="edit-list-medication" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" aria-label="..." id="select-all"/></th>
+                            <th>Name</th>
+                            <th>Dosage</th>
+                            <th>Frequency</th>
+                            <th>Type</th>
+                            <th>Instruction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-red pull-right" type="submit" name="delete" value="true" id="delete">Delete</button>
+                <a href class="btn btn-lime pull-right" id="edit-ipt-add-medication-button" data-toggle="modal" data-target="#add-medication-modal">Add</a>
+            </div>
+        </form>
+        <!-- END OF MEDICATION LIST FOR IPT -->
+
+
+        <!-- MEDICAL PROCEDURES LIST FOR IPT -->
+        <form method="POST" action="/delete_medication">
+            <legend><b>Medical Procedures</b></legend>
+            <div class="table-responsive">
+                <table id="edit-list-med-procedure" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" aria-label="..." id="select-all"/></th>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-red pull-right" type="submit" name="delete" value="true" id="delete-med-procedure-button">Delete</button>
+                <a href class="btn btn-lime pull-right" id="edit-ipt-add-med-procedure-button" data-toggle="modal" data-target="#add-med-procedure-modal">Add</a>
+            </div>
+        </form>
+        <!-- END OF MEDICAL PROCEDURES LIST FOR IPT -->
+
+        <legend><b>Add/Edit Attachments</b></legend>
+        <div class="form-group">
+            <input id="edit-ipt-attachments" name="add-ipt-attachments[]" type="file" multiple class="file-loading">
+        </div>
+        {% endif %}
+    </div>
+    <!-- BILLING FOR IPT -->
+    <div class="col-md-4"></div>
+    <!-- END OF BILLING FOR IPT -->
+</div>
+
+<script type="text/javascript">
+
+    $("#edit-ipt-form").submit(function (event) {
+        event.preventDefault();
+        edit_ipt_meds_table.rows().remove().draw();
+        edit_ipt_med_procedures_table.rows().remove().draw();
+        
+        var key = $("#edit-p-id").val();
+        var cu = $("#edit-c-id").val();
+        {% if doctor %}
+        var files = $('#edit-ipt-attachments').fileinput('getFileStack');
+        if(files.length != 0) {
+            $(".unique-name-edit-ipt").click();
+        } else {
+            $.ajax({
+                type: "POST",
+                url: "/ipt_edit/"+ key +"/"+cu,
+                data: {                
+                    'confinement-date': $("#edit-confinement-date-div select[name='date_[year]']").val() + '-' + $("#edit-confinement-date-div select[name='date_[month]']").val() + '-' +
+                    $("#edit-confinement-date-div select[name='date_[day]']").val(),
+                    
+                    'discharge-date': $("#edit-discharge-date-div select[name='date_[year]']").val() + '-' + $("#edit-discharge-date-div select[name='date_[month]']").val() + '-' +
+                    $("#edit-discharge-date-div select[name='date_[day]']").val(),
+                    
+                    'hospital': $("#edit-hospital").val(),
+                    'summary': $("#edit-summary").val(),
+                    'detailed-diagnosis': $("#edit-detailed-diagnosis").val(),
+                    'notes': $("#edit-notes").val(),
+                    'doctor': $("#hidden-edit-doctor").val(),
+                }
+            }).done(function (data) {
+                if(data.success) {
+                    $('#list-ipt-view').show();
+                    $('#edit-ipt-view').hide();
+                    $('#list-ipt-view-link').hide();
+                    showSnackBar('IPT Record successfully updated.');
+                } else {
+                    $("#opt-error-response").text(data.error);
+                    alert(data.error);
+                }
+            });
+        }
+        {% else %}
+        $.ajax({
+            type: "POST",
+            url: "/ipt_edit/"+ key +"/"+cu,
+            data: {                
+                'confinement-date': $("#edit-confinement-date-div select[name='date_[year]']").val() + '-' + $("#edit-confinement-date-div select[name='date_[month]']").val() + '-' +
+                $("#edit-confinement-date-div select[name='date_[day]']").val(),
+                
+                'discharge-date': $("#edit-discharge-date-div select[name='date_[year]']").val() + '-' + $("#edit-discharge-date-div select[name='date_[month]']").val() + '-' +
+                $("#edit-discharge-date-div select[name='date_[day]']").val(),
+                'hospital': $("#edit-hospital").val(),
+                'doctor': $("#hidden-edit-doctor").val(),
+            }
+        }).done(function (data) {
+            if(data.success) {
+                $('#list-ipt-view').show();
+                $('#edit-ipt-view').hide();
+                $('#list-ipt-view-link').hide();
+                showSnackBar('IPT Record successfully updated.');
+            } else {
+                $("#opt-error-response").text(data.error);
+                alert(data.error);
+            }
+        });
+        {% endif %}
+    });
+    {% if doctor %}
+    $("#edit-ipt-attachments").on("filepredelete", function (jqXHR) {
+        var abort = true;
+        if (confirm("Are you sure you want to delete this file?")) {
+            abort = false;
+        }
+        return abort;
+    });
+
+    $('#edit-ipt-attachments').on('fileloaded', function (event, file, previewId, index, reader) {
+        $('#edit-ipt-attachments').fileinput('upload');
+    });
+    {% endif %}
+
+    $('#delete-ipt-button').click(function(e){
+        // CONFIRM DIALOG DELETE
+        var key = $("#edit-p-id").val();
+        $.ajax({
+            type: "GET",
+            url: "/ipt_delete/"+ key,
+        }).done(function (data) {
+            if(data.hasChildRecords) {
+                $.confirm({
+                    title: 'Move to Archive',
+                    content: 'The record you want to archive has records associated with it. Archive them first.',
+                    buttons: {
+                        OK: function () {
+                            // $.alert('Confirmed!');
+                        },
+                    }
+                });
+            } else {
+                $.confirm({
+                    title: 'Move to Archive',
+                    content: 'Are you sure you want to move this record to archive?',
+                    buttons: {
+                        Confirm: function () {
+                            // $.alert('Confirmed!');
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/ipt_delete_confirmed/"+key,
+                            }).done(function(data){
+                                if(data.success){
+                                    $.alert({
+                                        title: 'Success',
+                                        content: 'Record successfully moved to archive!'
+                                    });
+                                    $('#list-ipt-view').show();
+                                    $('#edit-ipt-view').hide();
+                                    $('#list-ipt-view-link').hide();
+                                } else{
+                                    $.alert({
+                                        title: 'Error',
+                                        content: 'An error occured.'
+                                    });
+                                }
+                            });
+
+                        },
+                        Cancel: function () {
+                            // $.alert('Canceled!');
+                        },
+                    }
+                });
+            }
+        });
+    });
+
+    
+</script>

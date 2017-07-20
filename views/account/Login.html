@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Log In to Sayun Patient Information System</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/login.css">
+	<link rel="stylesheet" 	type="text/css"         href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/css/bootstrap-select.css">
+	<script 				type="text/javascript" 	src="../../static/js/jquery.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/bootstrap.min.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/viewportHeight.js"></script>
+	<script 				type="text/javascript"	src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.6.3/js/bootstrap-select.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="row main"> 
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+				<form method="POST">
+
+					<div class="logo"><img src="../../static/img/logo.png"></div>
+					<div class="row">
+						<div class="center">
+							{% if messages.statusMessage %}
+	                        <div class="alert alert-danger">
+	                            {{ messages.statusMessage }}
+	                        </div>
+	                        {% endif %}
+							<select class="selectpicker" data-live-search="true" data-size="5" name="spis_instance" required="required">
+							  <option value="0" selected disabled>Select your Clinic/Hospital</option>
+							  {% for single_instance in instances %}
+
+							  <option value="{{ single_instance.license_no }}">{{ single_instance.description }}</option>
+
+							  {% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<input type="text" value="" id="username" name="username" placeholder="username" required>
+					</div>
+					<div class="form-group row" style="">
+						<input type="password" value="" id="password" name="password" placeholder="password" required>
+					</div>
+					<div class="form-group row">
+						<button type="submit" class="btn-success" id="login">
+							Log in
+						</button>
+					</div>
+					<div class="row">
+						<a href="" class="col-12" data-toggle="modal" data-target="#forgotPassword">
+							<center>Forgot Password?</center>
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- Forgot Password -->
+		<div class="modal fade" id="forgotPassword" role="dialog">
+		    <div class="modal-dialog">
+		      <!-- Modal content-->
+		     	<div class="modal-content">
+			        <div class="modal-header">
+			        	<button type="button" class="close" data-dismiss="modal" style="color: black">&times;</button>
+			        	<h4 class="modal-title" style="float:left"><strong>Request for New Password</strong></h4>
+			        </div>
+		       		<div class="modal-body">
+		       			<div class="row">
+		       				<div class="col-xs-12 col-sm-8 col-sm-offset-2">
+			       				<center>
+			       					Please contact the Sayun help desk:
+			       				</center>
+			       				<hr>
+			       			</div>
+
+		       				<div class="clearfix"></div>
+		       				<div class="col-xs-12 col-sm-4 col-sm-offset-2" style="margin-top: 15px">
+		       					<center>
+						            <p><i class="glyphicon glyphicon-earphone"></i></p>
+								    <p><strong>Phone:</strong></br>{{ superuser.contact_number }}</p>
+								</center>
+					        </div>
+					        <div class="col-xs-12 col-sm-4" style="margin-top: 15px">
+					        	<center>
+						            <p><i class="glyphicon glyphicon-envelope"></i></p>
+						            <p><strong>E-mail:</strong></br>{{ superuser.email }}</p>
+						        </center>
+					        </div>
+		       			</div>
+		       		</div>
+		      	</div>
+		    </div>
+		</div>
+		<!-- end of Forgot Password -->
+	</div>
+</body>
+<script type="text/javascript">
+	$('#login').click(function () {
+		if($('.selectpicker').val()=='select clinic'){
+			alert("PLEASE SELECT A CLINIC");
+		}
+	});
+</script>'
+</html>

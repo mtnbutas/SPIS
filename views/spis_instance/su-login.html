@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Log in as Superuser</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/login.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/bootstrap.min.css">
+	<link rel="stylesheet" 	type="text/css" 		href="../../static/css/styles.css">
+	<script 				type="text/javascript" 	src="../../static/js/jquery.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/bootstrap.min.js"></script>
+	<script 				type="text/javascript" 	src="../../static/js/viewportHeight.js"></script>
+	<style>
+		form{
+			background-color: transparent;
+    		box-shadow: none;
+		}
+		form input{
+			width: 80%;
+		    margin-left: 10%;
+		    font-size: 20px;
+		    background-color: white;
+		    box-sizing: border-box;
+		    border-color: none;
+		    height: 60px;
+		    padding: 0 10px;
+			height: 40px;
+			font-size: 17px;
+		}
+
+		#login{
+			margin-top: -10px;
+			padding: 10px 5px;
+			width: 74%;
+			margin-left: 13%;
+		}
+
+	</style>
+</head>
+<body style="background: none;">
+	<div class="container">
+		<div class="row main" > 
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+
+				<form method="POST"  style="min-height: auto">
+					<div class="panel panel-primary">
+					  <div class="panel-heading">Log in as Superuser</div>
+					  <div class="panel-body">
+					    <div class="row">
+							<input type="text" value="" id="username" name="username" placeholder="username">
+						</div>
+						<div class="form-group row" style="">
+							<input type="password" value="" id="password" name="password" placeholder="password">
+						</div>
+					  </div>
+					  <p>{{ messages.statusMessage }}</p>
+					  <!-- <div class="panel-footer"> -->
+					  	<div class="form-group row">
+							<button type="submit" class="btn-lime" id="login">
+								Log in
+							</button>
+						</div>
+					  <!-- </div> -->
+					</div>
+				</form>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>
